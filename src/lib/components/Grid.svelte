@@ -10,7 +10,7 @@
 
   const xs = $state(20)
   const ys = $state(20)
-  const w = $state(16)
+  const w = $state(15)
 
   const { clazz = '', ...rest }: Props = $props()
 
@@ -35,9 +35,7 @@
 
       const tiles: PIXI.Sprite[] = []
 
-      const g_tile = new PIXI.Graphics()
-        .rect(0, 0, 1, 1)
-        .fill(0xFFFFFF)
+      const g_tile = new PIXI.Graphics().rect(0, 0, 1, 1).fill(0xFFFFFF)
       const tex_tile = app.renderer.generateTexture(g_tile)
 
       const bw = 1
