@@ -1,6 +1,7 @@
 import SBM from '$lib/SBM'
 import * as PIXI from 'pixi.js'
 
+import Op from './Op.svelte'
 import Tool from './Tool.svelte'
 import UndoMan from './UndoMan.svelte'
 
@@ -20,6 +21,7 @@ export default class Man {
   mat = new SBM()
   undoman = new UndoMan(this)
   tool?: Tool
+  op = new Op(this)
 
   #tex_tile?: PIXI.Texture
 

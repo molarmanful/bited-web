@@ -4,14 +4,14 @@ export default class SBM {
   ks = new Set<string>()
   size: [number, number] = [0, 0] // h, w
 
-  get(x: number, y: number) {
-    return this.in(x, y) ? this.ks.has(SBM.encode(x, y)) : void 0
+  get(y: number, x: number) {
+    return this.in(y, x) ? this.ks.has(SBM.encode(y, x)) : void 0
   }
 
-  set(x: number, y: number, v?: boolean) {
-    if (!this.in(x, y))
+  set(y: number, x: number, v?: boolean) {
+    if (!this.in(y, x))
       return
-    const k = SBM.encode(x, y)
+    const k = SBM.encode(y, x)
     if (v || (v === void 0 && !this.ks.has(k))) {
       this.ks.add(k)
       return
@@ -19,15 +19,20 @@ export default class SBM {
     this.ks.delete(k)
   }
 
-  in(x: number, y: number) {
-    return (x >= 0 && x < this.size[0]) && (y >= 0 && y < this.size[1])
+  add(y: number, x: number) {
+    this.size = [
+      Math.max(this.size[0], y),
+      Math.max(this.size[1], x),
+    ]
+    this.ks.add(SBM.encode(y, x))
+  }
+
+  in(y: number, x: number) {
+    return (y >= 0 && y < this.size[0]) && (x >= 0 && x < this.size[1])
   }
 
   resize(h: number, w: number) {
-    const [h0, w0] = this.size
     this.size = [h, w]
-    if (h < h0 || w < w0)
-      this.check()
   }
 
   check() {
@@ -57,18 +62,64 @@ export default class SBM {
     const [h, w] = this.size
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        this.set(x, y)
+        this.set(y, x)
       }
     }
   }
 
-  static encode(x: number, y: number) {
-    return `${x} ${y}`
+  transpose() {
+    this.eachI((y, x) => [x, y])
+    this.size.reverse()
+  }
+
+  flipY() {
+    this.eachI((y, x) => [y, this.size[1] - x])
+  }
+
+  flipX() {
+    this.eachI((y, x) => [this.size[0] - y, x])
+  }
+
+  rotCW() {
+    this.eachI((y, x) => [this.size[1] - x, y])
+  }
+
+  rotCCW() {
+    this.eachI((y, x) => [x, this.size[0] - y])
+  }
+
+  eachI(f: (y: number, x: number) => [number, number]) {
+    const ks = new Set<string>()
+    this.each((y, x) => {
+      ks.add(SBM.encode(...f(y, x)))
+    })
+    this.ks = ks
+  }
+
+  each(f: (y: number, x: number) => void) {
+    for (const k of this.ks) {
+      const [y, x] = SBM.decode(k)
+      f(y, x)
+    }
+  }
+
+  toPretty() {
+    const res = Array.from({ length: this.size[0] }).map(() =>
+      Array.from<number>({ length: this.size[1] }).fill(0),
+    )
+    this.each((y, x) => {
+      res[y][x] = 1
+    })
+    return res
+  }
+
+  static encode(y: number, x: number) {
+    return `${y} ${x}`
   }
 
   static decode(k: string): [number, number] {
-    const [sx, sy] = k.split(' ')
-    return [+sx, +sy]
+    const [sy, sx] = k.split(' ')
+    return [+sy, +sx]
   }
 
   static setify(a: KsLike) {
