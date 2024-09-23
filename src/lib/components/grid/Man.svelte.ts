@@ -2,7 +2,7 @@ import SBM from '$lib/SBM'
 import * as PIXI from 'pixi.js'
 
 import Tool from './Tool.svelte'
-import UndoMan, { UDiff } from './UndoMan.svelte'
+import UndoMan from './UndoMan.svelte'
 
 export default class Man {
   on = false
