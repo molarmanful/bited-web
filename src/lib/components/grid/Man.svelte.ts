@@ -1,20 +1,25 @@
+import SBM from '$lib/SBM'
 import * as PIXI from 'pixi.js'
 
-export default class GridMan {
+import Tool from './Tool.svelte'
+import UndoMan, { UDiff } from './UndoMan.svelte'
+
+export default class Man {
+  on = false
   xs = $state(20)
   ys = $state(20)
   w = $state(15)
   bw = 1
-  on = false
+  w1 = $derived(this.w + this.bw)
   paintable = false
   app?: PIXI.Application
   grid?: PIXI.Container
   tiles: PIXI.Sprite[] = []
+  mat = new SBM()
+  undoman = new UndoMan(this)
+  tool?: Tool
 
-  #w1 = $derived(this.w + this.bw)
   #tex_tile?: PIXI.Texture
-  #down = false
-  #tint = 0x000000
 
   async init(node: HTMLElement) {
     this.app = new PIXI.Application()
@@ -41,42 +46,46 @@ export default class GridMan {
     this.on = true
   }
 
+  destroy() {
+    this.unlisten()
+    this.app?.destroy({
+      removeView: true,
+    }, {
+      children: true,
+      texture: true,
+      textureSource: true,
+      context: true,
+    })
+  }
+
   listen() {
     this.grid
       ?.on('pointerdown', ({ screen: { x, y } }) => {
-        this.#down = true
-        this.paint(x, y, true)
+        this.tool = new Tool(this)
+        this.tool.pen(x, y, true)
       })
       .on('pointerup', () => {
-        this.#down = false
+        if (!this.tool)
+          return
+        this.undoman.act(this.tool.diff)
+        this.tool = void 0
       })
       .on('pointermove', ({ screen: { x, y } }) => {
-        if (!this.#down)
+        if (!this.tool)
           return
-        this.paint(x, y)
+        this.tool.pen(x, y)
       })
   }
 
-  paint(x: number, y: number, first = false) {
-    if (!this.paintable)
-      return
-
-    x = x - this.bw
-    y = y - this.bw
-    const i = (y / this.#w1 | 0) * this.xs + (x / this.#w1 | 0)
-
-    if (first) {
-      this.tiles[i].tint ^= 0xFFFFFF
-      this.#tint = this.tiles[i].tint
-      return
-    }
-    this.tiles[i].tint = this.#tint
+  unlisten() {
+    this.grid?.off('pointerdown').off('pointerup').off('pointermove')
   }
 
   gen() {
-    this.paintable = false
     this.grid?.removeChildren()
     this.tiles = []
+
+    this.mat.resize(this.xs, this.ys)
 
     for (let y = 0; y < this.ys; y++) {
       for (let x = 0; x < this.xs; x++) {
@@ -85,14 +94,13 @@ export default class GridMan {
           scale: this.w,
         })
 
-        tile.x = x * this.#w1 + this.bw
-        tile.y = y * this.#w1 + this.bw
+        tile.x = x * this.w1 + this.bw
+        tile.y = y * this.w1 + this.bw
+        tile.tint = +!this.mat.get(x, y) * 0xFFFFFF
 
         this.grid?.addChild(tile)
         this.tiles.push(tile)
       }
     }
-
-    this.paintable = true
   }
 }
