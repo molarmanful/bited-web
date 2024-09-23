@@ -4,6 +4,8 @@ import * as PIXI from 'pixi.js'
 import Tool from './Tool.svelte'
 import UndoMan from './UndoMan.svelte'
 
+const abort = new AbortController()
+
 export default class Man {
   on = false
   xs = $state(20)
@@ -65,13 +67,15 @@ export default class Man {
           return
         this.tool = new Tool(this)
         this.tool.pen(x, y, true)
+
+        addEventListener('pointerup', () => {
+          if (!this.tool)
+            return
+          this.undoman.act(this.tool.diff)
+          this.tool = void 0
+        }, { once: true, signal: abort.signal })
       })
-      .on('pointerup', () => {
-        if (!this.tool)
-          return
-        this.undoman.act(this.tool.diff)
-        this.tool = void 0
-      })
+
       .on('pointermove', ({ screen: { x, y } }) => {
         if (!this.tool)
           return
@@ -80,7 +84,8 @@ export default class Man {
   }
 
   unlisten() {
-    this.grid?.off('pointerdown').off('pointerup').off('pointermove')
+    this.grid?.off('pointerdown').off('pointermove')
+    abort.abort()
   }
 
   gen() {
