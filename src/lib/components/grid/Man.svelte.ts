@@ -61,6 +61,8 @@ export default class Man {
   listen() {
     this.grid
       ?.on('pointerdown', ({ screen: { x, y } }) => {
+        if (this.tool)
+          return
         this.tool = new Tool(this)
         this.tool.pen(x, y, true)
       })
