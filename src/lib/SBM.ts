@@ -1,5 +1,3 @@
-import 'core-js/proposals/set-methods-v2'
-
 type KsLike = SBM | Set<string>
 
 export default class SBM {
