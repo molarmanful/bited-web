@@ -1,6 +1,7 @@
 import SBM from '$lib/SBM'
 import * as PIXI from 'pixi.js'
 
+import Font from './Font.svelte'
 import Op from './Op.svelte'
 import Tool from './Tool.svelte'
 import UndoMan from './UndoMan.svelte'
@@ -13,11 +14,13 @@ export default class Man {
   pw = $state(12)
   bw = 1
   paintable = false
+
   app = new PIXI.Application()
   grid = new PIXI.Container()
   lines = new PIXI.Container()
-
   tiles: PIXI.Sprite[] = []
+
+  font = new Font()
   mat = new SBM()
   undoman = new UndoMan(this)
   tool?: Tool

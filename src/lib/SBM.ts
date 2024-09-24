@@ -4,6 +4,13 @@ export default class SBM {
   ks = new Set<string>()
   size: [number, number] = [0, 0] // h, w
 
+  clone() {
+    const a = new SBM()
+    a.ks = new Set(this.ks)
+    a.size = [...this.size]
+    return a
+  }
+
   get(y: number, x: number) {
     return this.in(y, x) ? this.ks.has(SBM.encode(y, x)) : void 0
   }
@@ -37,10 +44,10 @@ export default class SBM {
 
   // TODO: remove?
   check() {
-    for (const k of this.ks) {
-      if (!this.in(...SBM.decode(k)))
+    this.each((y, x, k) => {
+      if (!this.in(y, x))
         this.ks.delete(k)
-    }
+    })
   }
 
   union(a: KsLike) {
@@ -102,18 +109,18 @@ export default class SBM {
     this.eachI((y, x) => [x, h - y])
   }
 
-  eachI(f: (y: number, x: number) => [number, number]) {
+  eachI(f: (y: number, x: number, k: string) => [number, number]) {
     const ks = new Set<string>()
-    this.each((y, x) => {
-      ks.add(SBM.encode(...f(y, x)))
+    this.each((y, x, k) => {
+      ks.add(SBM.encode(...f(y, x, k)))
     })
     this.ks = ks
   }
 
-  each(f: (y: number, x: number) => void) {
+  each(f: (y: number, x: number, k: string) => void) {
     for (const k of this.ks) {
       const [y, x] = SBM.decode(k)
-      f(y, x)
+      f(y, x, k)
     }
   }
 
