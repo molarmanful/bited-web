@@ -124,6 +124,34 @@ export default class SBM {
     }
   }
 
+  get box() {
+    const [h, w] = this.size
+    let [ymin, xmin, ymax, xmax] = [h / 2, w / 2, h / 2, w / 2]
+    if (this.ks.size === 0)
+      return [ymin, xmin, ymax, xmax]
+
+    let t = false
+    this.each((y, x) => {
+      if (!t) {
+        [ymin, xmin, ymax, xmax] = [y, x, y + 1, x + 1]
+        t = true
+        return
+      }
+
+      ymin = Math.min(ymin, y)
+      xmin = Math.min(xmin, x)
+      ymax = Math.max(ymax, y + 1)
+      xmax = Math.max(xmax, x + 1)
+    })
+
+    return [ymin, xmin, ymax, xmax]
+  }
+
+  get boxDim() {
+    const [ymin, xmin, ymax, xmax] = this.box
+    return [ymax - ymin, xmax - xmin]
+  }
+
   get bitmap() {
     const [h, w] = this.size
     const xb = (w + 7) >> 3
