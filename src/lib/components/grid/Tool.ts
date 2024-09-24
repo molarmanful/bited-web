@@ -10,7 +10,7 @@ export default class Tool {
 
   constructor(man: Man) {
     this.man = man
-    this.prev = new Set(this.man.mat.ks)
+    this.prev = new Set(this.man.glyph.mat.ks)
   }
 
   pen(x: number, y: number, first = false, v?: boolean) {
@@ -31,12 +31,12 @@ export default class Tool {
     }
 
     this.man.tiles[i].tint = +!t * 0xFFFFFF
-    this.man.mat.set(y, x, t)
+    this.man.glyph.mat.set(y, x, t)
   }
 
   get diff() {
     const a = this.prev
-    const b = this.man.mat.ks
+    const b = this.man.glyph.mat.ks
     return new UDiff([
       a.difference(b),
       b.difference(a),

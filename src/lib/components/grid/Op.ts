@@ -10,10 +10,10 @@ export default class Op {
   }
 
   act(f: () => void) {
-    const a = new Set(this.man.mat.ks)
+    const a = new Set(this.man.glyph.mat.ks)
     f()
     this.man.gen()
-    const b = this.man.mat.ks
+    const b = this.man.glyph.mat.ks
     this.man.undoman.act(new UDiff([
       a.difference(b),
       b.difference(a),
@@ -21,36 +21,36 @@ export default class Op {
   }
 
   debug() {
-    console.log(this.man.mat.bitmap)
+    console.log(this.man.glyph.mat.bitmap)
   }
 
   transpose() {
     this.act(() => {
-      this.man.mat.transpose()
+      this.man.glyph.mat.transpose()
     })
   }
 
   flipX() {
     this.act(() => {
-      this.man.mat.flipX()
+      this.man.glyph.mat.flipX()
     })
   }
 
   flipY() {
     this.act(() => {
-      this.man.mat.flipY()
+      this.man.glyph.mat.flipY()
     })
   }
 
   rotCW() {
     this.act(() => {
-      this.man.mat.rotCCW()
+      this.man.glyph.mat.rotCCW()
     })
   }
 
   rotCCW() {
     this.act(() => {
-      this.man.mat.rotCW()
+      this.man.glyph.mat.rotCW()
     })
   }
 }

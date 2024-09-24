@@ -1,10 +1,13 @@
 import type Font from './Font'
 
+import SBM from '$lib/SBM'
+
 export default class Glyph {
   font: Font
   name: string
   code: number = -1
   width: number
+  mat: SBM = new SBM()
 
   constructor(font: Font, name: string, code = -1) {
     this.font = font

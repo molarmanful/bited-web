@@ -24,7 +24,6 @@ export default class Man {
   font = new Font()
   // TODO: remove
   glyph = new Glyph(this.font, 'test')
-  mat = new SBM()
   undoman = new UndoMan(this)
   tool?: Tool
   op = new Op(this)
@@ -109,7 +108,7 @@ export default class Man {
     this.lines.removeChildren()
     this.tiles = []
 
-    this.mat.resize(this.w, this.w)
+    this.glyph.mat.resize(this.w, this.w)
 
     const [dy, dx] = this.tr
     let [bly, blx] = this.glyph.tBL
@@ -170,7 +169,7 @@ export default class Man {
           scale: this.pw,
           x: xw,
           y: yw,
-          tint: +!this.mat.get(y, x) * 0xFFFFFF,
+          tint: +!this.glyph.mat.get(y, x) * 0xFFFFFF,
         })
 
         this.grid.addChild(tile)

@@ -45,11 +45,11 @@ export class USet {
   }
 
   undo(Man: Man) {
-    Man.mat = this.x[0]
+    Man.glyph.mat = this.x[0]
   }
 
   redo(Man: Man) {
-    Man.mat = this.x[1]
+    Man.glyph.mat = this.x[1]
   }
 }
 
@@ -61,12 +61,12 @@ export class UDiff {
   }
 
   undo(Man: Man) {
-    Man.mat.union(this.x[0])
-    Man.mat.difference(this.x[1])
+    Man.glyph.mat.union(this.x[0])
+    Man.glyph.mat.difference(this.x[1])
   }
 
   redo(Man: Man) {
-    Man.mat.difference(this.x[0])
-    Man.mat.union(this.x[1])
+    Man.glyph.mat.difference(this.x[0])
+    Man.glyph.mat.union(this.x[1])
   }
 }
