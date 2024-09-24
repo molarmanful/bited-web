@@ -2,6 +2,7 @@ import SBM from '$lib/SBM'
 import * as PIXI from 'pixi.js'
 
 import Font from './Font'
+import Glyph from './Glyph'
 import Op from './Op'
 import Tool from './Tool'
 import UndoMan from './UndoMan'
@@ -21,6 +22,8 @@ export default class Man {
   tiles: PIXI.Sprite[] = []
 
   font = new Font()
+  // TODO: remove
+  glyph = new Glyph(this.font, 'test')
   mat = new SBM()
   undoman = new UndoMan(this)
   tool?: Tool
@@ -31,8 +34,11 @@ export default class Man {
   async init(node: HTMLElement) {
     await this.app.init({
       antialias: false,
-      background: 0xAAAAAA,
+      background: 0xDDDDDD,
     })
+
+    // TODO: remove
+    this.glyph.width = 8
 
     node.appendChild(this.app.canvas)
 
@@ -105,26 +111,56 @@ export default class Man {
 
     this.mat.resize(this.w, this.w)
 
+    const [dy, dx] = this.tr
+    let [bly, blx] = this.glyph.tBL
+    bly += dy
+    blx += dx
+    const [oy, ox] = [bly - this.font.metrics.desc, blx]
+
+    const ww = this.w * this.pw
+
+    const hline = (y: number, tint: number, b = 0) => {
+      this.lines.addChild(
+        new PIXI.Sprite({
+          texture: this.#tex_tile,
+          height: this.bw + b,
+          width: ww,
+          y,
+          tint,
+        }),
+      )
+    }
+
+    const vline = (x: number, tint: number, b = 0) => {
+      this.lines.addChild(
+        new PIXI.Sprite({
+          texture: this.#tex_tile,
+          height: ww,
+          width: this.bw + b,
+          x,
+          tint,
+        }),
+      )
+    }
+
+    const htints = new Map([
+      [oy, 0x000000],
+      [oy - this.font.metrics.asc, 0xFF0000],
+      [oy - this.font.metrics.cap, 0xFFAA00],
+      [oy - this.font.metrics.x, 0xFFAA00],
+      [bly, 0x00CCCC],
+    ])
+
+    const vtints = new Map([
+      [ox, 0x000000],
+      [ox + this.glyph.width, 0x00CC00],
+    ])
+
     for (let y = 0; y < this.w; y++) {
       const yw = y * this.pw
-      const ww = this.w * this.pw
 
-      const hline = new PIXI.Sprite({
-        texture: this.#tex_tile,
-        height: this.bw,
-        width: ww,
-        y: yw,
-        tint: 0xAAAAAA,
-      })
-      const vline = new PIXI.Sprite({
-        texture: this.#tex_tile,
-        height: ww,
-        width: this.bw,
-        x: yw,
-        tint: 0xAAAAAA,
-      })
-      this.lines.addChild(hline)
-      this.lines.addChild(vline)
+      hline(yw, 0xDDDDDD)
+      vline(yw, 0xDDDDDD)
 
       for (let x = 0; x < this.w; x++) {
         const xw = x * this.pw
@@ -142,6 +178,15 @@ export default class Man {
       }
     }
 
+    for (const [k, v] of htints.entries()) hline(k * this.pw, v)
+    for (const [k, v] of vtints.entries()) vline(k * this.pw, v)
+
     this.app.renderer.resize(this.grid.width + this.bw, this.grid.height + this.bw)
+  }
+
+  get tr() {
+    const [cy, cx] = this.glyph.tCenter
+    const [y, x] = [this.w / 2 | 0, this.w / 2 | 0]
+    return [y - cy, x - cx]
   }
 }

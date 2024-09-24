@@ -10,15 +10,14 @@ interface Metrics {
 
 export default class Font {
   name = 'FONTNAME'
-  metrics = $state<Metrics>({
+  metrics: Metrics = {
     cap: 9,
     x: 6,
     asc: 12,
     desc: 4,
     width: 0,
-  })
+  }
 
-  size = $derived(this.metrics.asc + this.metrics.desc)
   glyphs = new Map<string, Glyph>()
 
   useMetrics(metrics: Partial<Metrics>) {
@@ -33,5 +32,9 @@ export default class Font {
 
   addGlyph(name: string, code = -1) {
     this.glyphs.set(name, new Glyph(this, name, code))
+  }
+
+  get size() {
+    return this.metrics.asc + this.metrics.desc
   }
 }

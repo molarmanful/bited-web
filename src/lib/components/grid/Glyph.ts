@@ -13,7 +13,11 @@ export default class Glyph {
     this.width = this.font.metrics.width
   }
 
-  get center(): [number, number] {
-    return [this.font.size / 2, this.width / 2] // y, x
+  get tCenter(): [number, number] { // y, x
+    return [this.font.size / 2 | 0, this.width / 2 | 0]
+  }
+
+  get tBL(): [number, number] { // y, x
+    return [this.font.size, 0]
   }
 }

@@ -165,4 +165,8 @@ export default class SBM {
   static setify(a: KsLike) {
     return a instanceof SBM ? a.ks : a
   }
+
+  static p2p(y0: number, x0: number, y1: number, x1: number) {
+    return [y1 - y0, x1 - x0]
+  }
 }
