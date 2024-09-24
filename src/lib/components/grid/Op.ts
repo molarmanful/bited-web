@@ -21,7 +21,7 @@ export default class Op {
   }
 
   debug() {
-    console.log(this.man.glyph.mat.bitmap)
+    console.log(this.man.glyph.bbx)
   }
 
   transpose() {

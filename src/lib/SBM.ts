@@ -124,40 +124,26 @@ export default class SBM {
     }
   }
 
-  get box(): [number, number, number, number] {
-    const [h, w] = this.size
-    let [ymin, xmin, ymax, xmax] = [h / 2, w / 2, h / 2, w / 2]
+  get box(): [number, number, number, number, number, number] {
+    let [ymin, xmin, ymax, xmax] = [0, 0, 0, 0]
     if (this.ks.size === 0)
-      return [ymin, xmin, ymax, xmax]
+      return [0, 0, ymin, xmin, ymax, xmax]
 
     let t = false
     this.each((y, x) => {
       if (!t) {
-        [ymin, xmin, ymax, xmax] = [y, x, y + 1, x + 1]
+        [ymin, xmin, ymax, xmax] = [y, x, y, x]
         t = true
         return
       }
 
       ymin = Math.min(ymin, y)
       xmin = Math.min(xmin, x)
-      ymax = Math.max(ymax, y + 1)
-      xmax = Math.max(xmax, x + 1)
+      ymax = Math.max(ymax, y)
+      xmax = Math.max(xmax, x)
     })
 
-    return [ymin, xmin, ymax, xmax]
-  }
-
-  get boxDim(): [number, number] {
-    const [ymin, xmin, ymax, xmax] = this.box
-    return [ymax - ymin, xmax - xmin]
-  }
-
-  get bitmap() {
-    const a = this.clone()
-    const [ymin, xmin] = a.box
-    a.translate(-ymin, -xmin)
-    a.resize(...a.boxDim)
-    return `${a}`
+    return [ymax - ymin + 1, xmax - xmin + 1, ymin, xmin, ymax, xmax]
   }
 
   get bits() {

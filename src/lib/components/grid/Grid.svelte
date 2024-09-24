@@ -17,6 +17,7 @@
 
   let scale = $state(man.scale)
   let pw = $state(man.pw)
+  let code = $state('')
 
   const render: Action = (node) => {
     man.init(node)
@@ -37,6 +38,13 @@
   <button type='submit'>UPDATE</button>
 </form>
 
+<form onsubmit={() => {
+  man.glyph.fromBDF(code)
+}}>
+  <textarea bind:value={code}></textarea>
+  <button type='submit'>CODE</button>
+</form>
+
 <button onclick={() => man.op.debug()}>DEBUG</button>
 <button onclick={() => man.undoman.undo()}>UNDO</button>
 <button onclick={() => man.undoman.redo()}>REDO</button>
@@ -46,4 +54,4 @@
 <button onclick={() => man.op.rotCW()}>CW</button>
 <button onclick={() => man.op.rotCCW()}>CCW</button>
 
-<div class='{clazz} image-render-pixel cursor-crosshair' use:render {...rest}></div>
+<div class='{clazz} image-render-pixel cursor-crosshair w-fit' use:render {...rest}></div>

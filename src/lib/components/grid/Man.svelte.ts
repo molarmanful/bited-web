@@ -108,13 +108,12 @@ export default class Man {
     this.lines.removeChildren()
     this.tiles = []
 
+    const [oy0, ox0] = this.glyph.origin
     this.glyph.mat.resize(this.w, this.w)
 
-    const [dy, dx] = this.tr
-    let [bly, blx] = this.glyph.tBL
-    bly += dy
-    blx += dx
-    const [oy, ox] = [bly - this.font.metrics.desc, blx]
+    const [bly] = this.glyph.cornerBL
+    const [oy, ox] = this.glyph.origin
+    this.glyph.mat.translate(oy - oy0, ox - ox0)
 
     const ww = this.w * this.pw
 
@@ -181,11 +180,5 @@ export default class Man {
     for (const [k, v] of vtints.entries()) vline(k * this.pw, v)
 
     this.app.renderer.resize(this.grid.width + this.bw, this.grid.height + this.bw)
-  }
-
-  get tr() {
-    const [cy, cx] = this.glyph.tCenter
-    const [y, x] = [this.w / 2 | 0, this.w / 2 | 0]
-    return [y - cy, x - cx]
   }
 }
