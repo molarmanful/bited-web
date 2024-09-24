@@ -1,10 +1,10 @@
 import SBM from '$lib/SBM'
 import * as PIXI from 'pixi.js'
 
-import Font from './Font.svelte'
-import Op from './Op.svelte'
-import Tool from './Tool.svelte'
-import UndoMan from './UndoMan.svelte'
+import Font from './Font'
+import Op from './Op'
+import Tool from './Tool'
+import UndoMan from './UndoMan'
 
 export default class Man {
   on = false

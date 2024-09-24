@@ -1,6 +1,6 @@
 import type Man from './Man.svelte'
 
-import { UDiff } from './UndoMan.svelte'
+import { UDiff } from './UndoMan'
 
 export default class Tool {
   man: Man
