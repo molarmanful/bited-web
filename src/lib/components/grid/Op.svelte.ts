@@ -20,6 +20,10 @@ export default class Op {
     ]))
   }
 
+  debug() {
+    console.log(this.man.mat.bin)
+  }
+
   transpose() {
     this.act(() => {
       this.man.mat.transpose()
@@ -40,13 +44,13 @@ export default class Op {
 
   rotCW() {
     this.act(() => {
-      this.man.mat.rotCW()
+      this.man.mat.rotCCW()
     })
   }
 
   rotCCW() {
     this.act(() => {
-      this.man.mat.rotCCW()
+      this.man.mat.rotCW()
     })
   }
 }

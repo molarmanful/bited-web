@@ -15,9 +15,8 @@
 
   const man = new Man()
 
-  let xs = $state(man.xs)
-  let ys = $state(man.ys)
-  let w = $state(man.w)
+  let scale = $state(man.scale)
+  let pw = $state(man.pw)
 
   const render: Action = (node) => {
     man.init(node)
@@ -29,23 +28,22 @@
 <svelte:window bind:innerHeight bind:innerWidth />
 
 <form onsubmit={() => {
-  man.xs = xs
-  man.ys = ys
-  man.w = w
+  man.scale = scale
+  man.pw = pw
   man.gen()
 }}>
-  <input type='number' bind:value={xs} />
-  <input type='number' bind:value={ys} />
-  <input type='number' bind:value={w} />
+  <input min='1' type='number' bind:value={scale} />
+  <input min='4' step='4' type='number' bind:value={pw} />
   <button type='submit'>UPDATE</button>
 </form>
 
+<button onclick={() => man.op.debug()}>DEBUG</button>
 <button onclick={() => man.undoman.undo()}>UNDO</button>
 <button onclick={() => man.undoman.redo()}>REDO</button>
 <button onclick={() => man.op.transpose()}>TRANSPOSE</button>
-<button onclick={() => man.op.flipX()}>X</button>
-<button onclick={() => man.op.flipY()}>Y</button>
+<button onclick={() => man.op.flipX()}>FLIPX</button>
+<button onclick={() => man.op.flipY()}>FLIPY</button>
 <button onclick={() => man.op.rotCW()}>CW</button>
 <button onclick={() => man.op.rotCCW()}>CCW</button>
 
-<div class='{clazz} image-render-pixel' use:render {...rest}></div>
+<div class='{clazz} image-render-pixel cursor-crosshair' use:render {...rest}></div>

@@ -14,9 +14,9 @@ export default class Tool {
   }
 
   pen(x: number, y: number, first = false, v?: boolean) {
-    x = (x - this.man.bw) / this.man.w1 | 0
-    y = (y - this.man.bw) / this.man.w1 | 0
-    const i = y * this.man.xs + x
+    x = x / this.man.pw | 0
+    y = y / this.man.pw | 0
+    const i = y * this.man.w + x
 
     let t = false
     if (v !== void 0) {
@@ -31,7 +31,7 @@ export default class Tool {
     }
 
     this.man.tiles[i].tint = +!t * 0xFFFFFF
-    this.man.mat.set(x, y, t)
+    this.man.mat.set(y, x, t)
   }
 
   get diff() {

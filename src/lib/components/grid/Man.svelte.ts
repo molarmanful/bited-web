@@ -5,18 +5,18 @@ import Op from './Op.svelte'
 import Tool from './Tool.svelte'
 import UndoMan from './UndoMan.svelte'
 
-const abort = new AbortController()
-
 export default class Man {
   on = false
-  xs = $state(20)
-  ys = $state(20)
-  w = $state(15)
+  // TODO: scale based on glyph bounds
+  scale = $state(4)
+  w = $derived(8 * this.scale)
+  pw = $state(12)
   bw = 1
-  w1 = $derived(this.w + this.bw)
   paintable = false
-  app?: PIXI.Application
-  grid?: PIXI.Container
+  app = new PIXI.Application()
+  grid = new PIXI.Container()
+  lines = new PIXI.Container()
+
   tiles: PIXI.Sprite[] = []
   mat = new SBM()
   undoman = new UndoMan(this)
@@ -26,19 +26,16 @@ export default class Man {
   #tex_tile?: PIXI.Texture
 
   async init(node: HTMLElement) {
-    this.app = new PIXI.Application()
     await this.app.init({
-      resizeTo: node,
       antialias: false,
       background: 0xAAAAAA,
     })
 
     node.appendChild(this.app.canvas)
 
-    this.grid = new PIXI.Container({
-      interactive: true,
-    })
+    this.grid.interactive = true
     this.app.stage.addChild(this.grid)
+    this.app.stage.addChild(this.lines)
 
     this.listen()
 
@@ -63,53 +60,85 @@ export default class Man {
   }
 
   listen() {
+    const up = () => {
+      if (!this.tool)
+        return
+      this.undoman.act(this.tool.diff)
+      this.tool = void 0
+    }
+
     this.grid
-      ?.on('pointerdown', ({ screen: { x, y } }) => {
+      .on('pointerdown', ({ screen: { x, y } }) => {
         if (this.tool)
           return
         this.tool = new Tool(this)
         this.tool.pen(x, y, true)
-
-        addEventListener('pointerup', () => {
-          if (!this.tool)
-            return
-          this.undoman.act(this.tool.diff)
-          this.tool = void 0
-        }, { once: true, signal: abort.signal })
       })
+
+      .on('pointerup', up)
+      .on('pointerupoutside', up)
 
       .on('pointermove', ({ screen: { x, y } }) => {
         if (!this.tool)
           return
+        x = Math.max(0, Math.min(this.grid.width - this.bw, x))
+        y = Math.max(0, Math.min(this.grid.height - this.bw, y))
         this.tool.pen(x, y)
       })
   }
 
   unlisten() {
-    this.grid?.off('pointerdown').off('pointermove')
-    abort.abort()
+    this.grid
+      .off('pointerdown')
+      .off('pointerup')
+      .off('pointerupoutside')
+      .off('pointermove')
   }
 
   gen() {
-    this.grid?.removeChildren()
+    this.grid.removeChildren()
+    this.lines.removeChildren()
     this.tiles = []
 
-    this.mat.resize(this.xs, this.ys)
+    this.mat.resize(this.w, this.w)
 
-    for (let y = 0; y < this.ys; y++) {
-      for (let x = 0; x < this.xs; x++) {
+    for (let y = 0; y < this.w; y++) {
+      const yw = y * this.pw
+      const ww = this.w * this.pw
+
+      const hline = new PIXI.Sprite({
+        texture: this.#tex_tile,
+        height: this.bw,
+        width: ww,
+        y: yw,
+        tint: 0xAAAAAA,
+      })
+      const vline = new PIXI.Sprite({
+        texture: this.#tex_tile,
+        height: ww,
+        width: this.bw,
+        x: yw,
+        tint: 0xAAAAAA,
+      })
+      this.lines.addChild(hline)
+      this.lines.addChild(vline)
+
+      for (let x = 0; x < this.w; x++) {
+        const xw = x * this.pw
+
         const tile = new PIXI.Sprite({
           texture: this.#tex_tile,
-          scale: this.w,
+          scale: this.pw,
+          x: xw,
+          y: yw,
+          tint: +!this.mat.get(y, x) * 0xFFFFFF,
         })
 
-        tile.x = x * this.w1 + this.bw
-        tile.y = y * this.w1 + this.bw
-        tile.tint = +!this.mat.get(x, y) * 0xFFFFFF
-
-        this.grid?.addChild(tile)
+        this.grid.addChild(tile)
         this.tiles.push(tile)
       }
     }
+
+    this.app.renderer.resize(this.grid.width + this.bw, this.grid.height + this.bw)
   }
 }

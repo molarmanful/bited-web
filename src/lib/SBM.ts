@@ -35,6 +35,7 @@ export default class SBM {
     this.size = [h, w]
   }
 
+  // TODO: remove?
   check() {
     for (const k of this.ks) {
       if (!this.in(...SBM.decode(k)))
@@ -72,20 +73,33 @@ export default class SBM {
     this.size.reverse()
   }
 
+  translate(y: number, x: number) {
+    this.eachI((y1, x1) => [y1 + y, x1 + x])
+  }
+
   flipY() {
-    this.eachI((y, x) => [y, this.size[1] - x])
+    const [_, w] = this.size
+    this.eachI((y, x) => [y, w - x])
   }
 
   flipX() {
-    this.eachI((y, x) => [this.size[0] - y, x])
+    const [h] = this.size
+    this.eachI((y, x) => [h - y, x])
+  }
+
+  flipXY() {
+    const [h, w] = this.size
+    this.eachI((y, x) => [h - y, w - x])
   }
 
   rotCW() {
-    this.eachI((y, x) => [this.size[1] - x, y])
+    const [_, w] = this.size
+    this.eachI((y, x) => [w - x, y])
   }
 
   rotCCW() {
-    this.eachI((y, x) => [x, this.size[0] - y])
+    const [h] = this.size
+    this.eachI((y, x) => [x, h - y])
   }
 
   eachI(f: (y: number, x: number) => [number, number]) {
@@ -103,14 +117,33 @@ export default class SBM {
     }
   }
 
-  toPretty() {
-    const res = Array.from({ length: this.size[0] }).map(() =>
-      Array.from<number>({ length: this.size[1] }).fill(0),
-    )
+  get bitmap() {
+    const [h, w] = this.size
+    const xb = (w + 7) >> 3
+    const res
+      = Array.from<Uint8Array>({ length: h }).map(() =>
+        new Uint8Array(xb),
+      )
+
     this.each((y, x) => {
-      res[y][x] = 1
+      if (this.in(y, x))
+        res[y][x >> 3] |= 1 << (7 - (x & 7))
     })
+
     return res
+  }
+
+  get bin() {
+    return this.toString(c => c.toString(2).padStart(8, '0'), ' ')
+  }
+
+  toString(
+    f = (c: number) => c.toString(16).padStart(2, '0'),
+    j = '',
+  ) {
+    return this.bitmap.map(a =>
+      [...a].map(f).join(j),
+    ).join('\n')
   }
 
   static encode(y: number, x: number) {
