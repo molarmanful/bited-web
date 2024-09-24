@@ -32,7 +32,7 @@
   man.pw = pw
   man.gen()
 }}>
-  <input min='1' type='number' bind:value={scale} />
+  <input min={(man.font.size + 15) >> 3} type='number' bind:value={scale} />
   <input min='4' step='4' type='number' bind:value={pw} />
   <button type='submit'>UPDATE</button>
 </form>

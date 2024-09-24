@@ -124,7 +124,7 @@ export default class SBM {
     }
   }
 
-  get box() {
+  get box(): [number, number, number, number] {
     const [h, w] = this.size
     let [ymin, xmin, ymax, xmax] = [h / 2, w / 2, h / 2, w / 2]
     if (this.ks.size === 0)
@@ -147,12 +147,20 @@ export default class SBM {
     return [ymin, xmin, ymax, xmax]
   }
 
-  get boxDim() {
+  get boxDim(): [number, number] {
     const [ymin, xmin, ymax, xmax] = this.box
     return [ymax - ymin, xmax - xmin]
   }
 
   get bitmap() {
+    const a = this.clone()
+    const [ymin, xmin] = a.box
+    a.translate(-ymin, -xmin)
+    a.resize(...a.boxDim)
+    return `${a}`
+  }
+
+  get bits() {
     const [h, w] = this.size
     const xb = (w + 7) >> 3
     const res
@@ -176,7 +184,7 @@ export default class SBM {
     f = (c: number) => c.toString(16).padStart(2, '0'),
     j = '',
   ) {
-    return this.bitmap.map(a =>
+    return this.bits.map(a =>
       [...a].map(f).join(j),
     ).join('\n')
   }

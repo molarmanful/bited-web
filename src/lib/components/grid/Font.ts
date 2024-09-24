@@ -12,9 +12,9 @@ export default class Font {
   name = 'FONTNAME'
   metrics: Metrics = {
     cap: 9,
-    x: 6,
-    asc: 12,
-    desc: 4,
+    x: 7,
+    asc: 14,
+    desc: 2,
     width: 0,
   }
 

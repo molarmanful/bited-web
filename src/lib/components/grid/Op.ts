@@ -21,7 +21,7 @@ export default class Op {
   }
 
   debug() {
-    console.log(this.man.mat.box)
+    console.log(this.man.mat.bitmap)
   }
 
   transpose() {
