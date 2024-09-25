@@ -2,6 +2,7 @@
   import type { Snippet } from 'svelte'
 
   import 'core-js/proposals/set-methods-v2'
+  import '@unocss/reset/tailwind-compat.css'
   import 'uno:components.css'
   import 'uno.css'
   import '../app.css'

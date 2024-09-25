@@ -1,4 +1,3 @@
-import SBM from '$lib/SBM'
 import * as PIXI from 'pixi.js'
 
 import Font from './Font'
@@ -13,6 +12,7 @@ export default class Man {
   scale = $state(4)
   w = $derived(8 * this.scale)
   pw = $state(12)
+  odd = $state(0)
   bw = 1
   paintable = false
 
@@ -20,6 +20,9 @@ export default class Man {
   grid = new PIXI.Container()
   lines = new PIXI.Container()
   tiles: PIXI.Sprite[] = []
+  resize = () => {
+    this.odd = this.app.renderer.width % 2
+  }
 
   font = new Font()
   // TODO: remove
@@ -75,6 +78,9 @@ export default class Man {
       this.tool = void 0
     }
 
+    this.app.renderer.on('resize', this.resize)
+    addEventListener('resize', this.resize)
+
     this.grid
       .on('pointerdown', ({ screen: { x, y } }) => {
         if (this.tool)
@@ -96,6 +102,8 @@ export default class Man {
   }
 
   unlisten() {
+    this.app.renderer.off('resize')
+    removeEventListener('resize', this.resize)
     this.grid
       .off('pointerdown')
       .off('pointerup')

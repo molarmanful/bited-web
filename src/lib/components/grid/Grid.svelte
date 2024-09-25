@@ -18,31 +18,16 @@
   let scale = $state(man.scale)
   let pw = $state(man.pw)
 
-  let rw = $state(0)
-
   const render: Action = (node) => {
     man.init(node)
 
     return { destroy: () => man.destroy() }
   }
-
-  const mpx: Action = (node) => {
-    $effect(() => {
-      if (!innerWidth || !rw)
-        return
-
-      node.style.paddingTop = node.style.paddingLeft = '0'
-      const { x, y } = node.getBoundingClientRect()
-      node.style.paddingTop = `${1 - (y % 1)}px`
-      node.style.paddingLeft = `${1 - (x % 1)}px`
-      console.log(x, y, node.style.paddingLeft, node.style.paddingTop)
-    })
-  }
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
 
-<div class='flex flex-col items-center'>
+<div class='size-screen flex flex-col items-center'>
   <div>
     <form onsubmit={() => {
       man.scale = scale
@@ -65,9 +50,9 @@
   </div>
 
   <div
-    class='{clazz} image-render-pixel cursor-crosshair mx-auto'
-    bind:clientWidth={rw}
-    use:mpx
+    style:padding-top='{man.odd}px'
+    style:padding-left='{man.odd}px'
+    class='{clazz} image-render-pixel cursor-crosshair m-auto overflow-auto'
     use:render
     {...rest}
   ></div>
