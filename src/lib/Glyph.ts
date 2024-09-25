@@ -1,4 +1,4 @@
-import type Font from './Font'
+import type Font from '$lib/Font'
 
 import SBM from '$lib/SBM'
 

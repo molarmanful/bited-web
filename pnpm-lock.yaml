@@ -23,6 +23,9 @@ importers:
       '@types/core-js':
         specifier: ^2.5.8
         version: 2.5.8
+      '@unicode/unicode-16.0.0':
+        specifier: ^1.6.0
+        version: 1.6.0
       '@unocss/eslint-plugin':
         specifier: ^0.62.4
         version: 0.62.4(eslint@9.11.0(jiti@1.21.6))(typescript@5.6.2)
@@ -765,6 +768,9 @@ packages:
   '@typescript-eslint/visitor-keys@8.6.0':
     resolution: {integrity: sha512-wapVFfZg9H0qOYh4grNVQiMklJGluQrOUiOhYRrQWhx7BY/+I1IYb8BczWNbbUpO+pqy0rDciv3lQH5E1bCLrg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@unicode/unicode-16.0.0@1.6.0':
+    resolution: {integrity: sha512-LhZuBZWKR5BTzMK7qEEzjN4sw/Ke4hWAXNNmvWfBn5sKGXtStwlvDmlUxgwEPC4/+Al25f4trBGna3iDZi/Syg==}
 
   '@unocss/astro@0.62.4':
     resolution: {integrity: sha512-98KfkbrNhBLx2+uYxMiGsldIeIZ6/PbL4yaGRHeHoiHd7p4HmIyCF+auYe4Psntx3Yr8kU+XSIAhGDYebvTidQ==}
@@ -2960,6 +2966,8 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.6.0
       eslint-visitor-keys: 3.4.3
+
+  '@unicode/unicode-16.0.0@1.6.0': {}
 
   '@unocss/astro@0.62.4(rollup@4.22.2)(vite@5.4.7)':
     dependencies:

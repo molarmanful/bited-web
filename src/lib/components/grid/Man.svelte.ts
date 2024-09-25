@@ -1,7 +1,7 @@
+import Font from '$lib/Font'
+import Glyph from '$lib/Glyph'
 import * as PIXI from 'pixi.js'
 
-import Font from './Font'
-import Glyph from './Glyph'
 import Op from './Op'
 import Tool from './Tool'
 import UndoMan from './UndoMan'

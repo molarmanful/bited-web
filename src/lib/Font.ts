@@ -1,4 +1,4 @@
-import Glyph from './Glyph'
+import Glyph from '$lib/Glyph'
 
 interface Metrics {
   cap: number
