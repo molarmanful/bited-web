@@ -52,7 +52,4 @@ export default class Glyph {
     a.resize(h, w)
     return `${a}`
   }
-
-  fromBDF(code: string) {
-  }
 }
