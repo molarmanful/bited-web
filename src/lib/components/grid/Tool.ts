@@ -58,7 +58,7 @@ export default class Tool {
 
   interp(x: number, y: number): [number, number][] {
     let [x0, y0] = this.ptr
-    const xys: [number, number][] = [[x, y]]
+    const xys: [number, number][] = [[x0, y0]]
 
     const dx = Math.abs(x - x0)
     const dy = Math.abs(y - y0)
