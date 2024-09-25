@@ -40,13 +40,18 @@
     </form>
 
     <button onclick={() => man.op.debug()}>DEBUG</button>
+
     <button onclick={() => man.undoman.undo()}>UNDO</button>
     <button onclick={() => man.undoman.redo()}>REDO</button>
+
     <button onclick={() => man.op.transpose()}>TRANSPOSE</button>
     <button onclick={() => man.op.flipX()}>FLIPX</button>
     <button onclick={() => man.op.flipY()}>FLIPY</button>
     <button onclick={() => man.op.rotCW()}>CW</button>
     <button onclick={() => man.op.rotCCW()}>CCW</button>
+
+    <button onclick={() => man.mode = 'pen'}>PEN</button>
+    <button onclick={() => man.mode = 'line'}>LINE</button>
   </div>
 
   <div

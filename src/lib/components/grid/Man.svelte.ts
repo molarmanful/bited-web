@@ -6,6 +6,14 @@ import Op from './Op'
 import Tool from './Tool'
 import UndoMan from './UndoMan'
 
+type Mode = 'pen' | 'line'
+
+interface Handlers {
+  down?: (tool: Tool, x: number, y: number) => void
+  move?: (tool: Tool, x: number, y: number) => void
+  up?: (tool: Tool, x: number, y: number) => void
+}
+
 export default class Man {
   on = false
   // TODO: scale based on glyph bounds
@@ -14,7 +22,7 @@ export default class Man {
   pw = $state(12)
   odd = $state(0)
   bw = 1
-  paintable = false
+  mode = $state<Mode>('pen')
 
   app = new PIXI.Application()
   grid = new PIXI.Container()
@@ -71,9 +79,10 @@ export default class Man {
   }
 
   listen() {
-    const up = () => {
+    const up = ({ screen: { x, y } }: PIXI.FederatedPointerEvent) => {
       if (!this.tool)
         return
+      this.handlers.up?.(this.tool, x, y)
       this.undoman.act(this.tool.diff)
       this.tool = void 0
     }
@@ -86,19 +95,35 @@ export default class Man {
         if (this.tool)
           return
         this.tool = new Tool(this)
-        this.tool.pen(x, y, true)
+        this.handlers.down?.(this.tool, x, y)
       })
-
-      .on('pointerup', up)
-      .on('pointerupoutside', up)
 
       .on('pointermove', ({ screen: { x, y } }) => {
         if (!this.tool)
           return
         x = Math.max(0, Math.min(this.grid.width - this.bw, x))
         y = Math.max(0, Math.min(this.grid.height - this.bw, y))
-        this.tool.pen(x, y)
+        this.handlers.move?.(this.tool, x, y)
       })
+
+      .on('pointerup', up)
+      .on('pointerupoutside', up)
+  }
+
+  get handlers() {
+    const handlers: Record<Mode, Handlers> = {
+      pen: {
+        down(tool, x, y) { tool.pen(x, y, true) },
+        move(tool, x, y) { tool.pen(x, y) },
+      },
+      line: {
+        down(tool, x, y) { tool.line(x, y, true) },
+        move(tool, x, y) { tool.line(x, y) },
+        up(tool, x, y) { tool.line(x, y, false, true) },
+      },
+    }
+
+    return handlers[this.mode]
   }
 
   unlisten() {

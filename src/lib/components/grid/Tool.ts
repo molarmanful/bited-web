@@ -14,42 +14,45 @@ export default class Tool {
     this.prev = new Set(this.man.glyph.mat.ks)
   }
 
-  pen(x: number, y: number, first = false, v?: boolean) {
-    const x1 = x / this.man.pw | 0
-    const y1 = y / this.man.pw | 0
+  pen(x: number, y: number, down = false, v?: boolean) {
+    const x0 = x / this.man.pw | 0
+    const y0 = y / this.man.pw | 0
 
     let t = false
     if (v !== void 0) {
       t = v
     }
-    else if (first) {
+    else if (down) {
       // TODO: change to account for dark mode
-      t = this.#color = !!this.man.tiles[y1 * this.man.w + x1].tint
-      this.ptr = [x1, y1]
+      t = this.#color = !!this.man.tiles[y0 * this.man.w + x0].tint
+      this.ptr = [x0, y0]
     }
     else {
       t = this.#color
     }
 
-    for (const [x, y] of this.interp(x1, y1)) {
+    for (const [x, y] of this.interp(x0, y0)) {
       this.man.tiles[y * this.man.w + x].tint = +!t * 0xFFFFFF
       this.man.glyph.mat.set(y, x, t)
     }
-    this.ptr = [x1, y1]
+
+    this.ptr = [x0, y0]
   }
 
-  line(x: number, y: number, first = false) {
+  line(x: number, y: number, down = false, up = false) {
     this.man.retint()
 
-    const x1 = x / this.man.pw | 0
-    const y1 = y / this.man.pw | 0
+    const x0 = x / this.man.pw | 0
+    const y0 = y / this.man.pw | 0
 
-    if (first) {
-      this.ptr = [x, y]
+    if (down) {
+      this.ptr = [x0, y0]
     }
 
-    for (const [x, y] of this.interp(x1, y1)) {
+    for (const [x, y] of this.interp(x0, y0)) {
       this.man.tiles[y * this.man.w + x].tint = 0
+      if (up)
+        this.man.glyph.mat.set(y, x, true)
     }
   }
 
