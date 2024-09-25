@@ -79,9 +79,15 @@ export default class Man {
   }
 
   listen() {
+    const clamp = (x: number, y: number): [number, number] => [
+      Math.max(0, Math.min(this.grid.width - this.bw, x)),
+      Math.max(0, Math.min(this.grid.height - this.bw, y)),
+    ]
+
     const up = ({ screen: { x, y } }: PIXI.FederatedPointerEvent) => {
       if (!this.tool)
         return
+      [x, y] = clamp(x, y)
       this.handlers.up?.(this.tool, x, y)
       this.undoman.act(this.tool.diff)
       this.tool = void 0
@@ -101,8 +107,7 @@ export default class Man {
       .on('pointermove', ({ screen: { x, y } }) => {
         if (!this.tool)
           return
-        x = Math.max(0, Math.min(this.grid.width - this.bw, x))
-        y = Math.max(0, Math.min(this.grid.height - this.bw, y))
+        [x, y] = clamp(x, y)
         this.handlers.move?.(this.tool, x, y)
       })
 
