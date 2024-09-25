@@ -2,4 +2,6 @@
   import { Grid, Table } from '$lib/components'
 </script>
 
-<Table />
+<div class='mx-auto container'>
+  <Table />
+</div>
