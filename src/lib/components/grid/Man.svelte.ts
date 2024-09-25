@@ -189,4 +189,13 @@ export default class Man {
 
     this.app.renderer.resize(this.grid.width + this.bw, this.grid.height + this.bw)
   }
+
+  retint() {
+    for (const i_ in this.tiles) {
+      const i = +i_
+      const x = i % this.w
+      const y = i / this.w | 0
+      this.tiles[i].tint = +!this.glyph.mat.get(y, x) * 0xFFFFFF
+    }
+  }
 }
