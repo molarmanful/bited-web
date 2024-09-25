@@ -214,8 +214,8 @@ export default class Man {
       }
     }
 
-    for (const [k, v] of htints.entries()) hline(k * this.pw, v)
     for (const [k, v] of vtints.entries()) vline(k * this.pw, v)
+    for (const [k, v] of htints.entries()) hline(k * this.pw, v)
 
     this.app.renderer.resize(this.grid.width + this.bw, this.grid.height + this.bw)
   }
