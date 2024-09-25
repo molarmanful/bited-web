@@ -85,7 +85,7 @@ export default class SBM {
   }
 
   flipY() {
-    const [_, w] = this.size
+    const [, w] = this.size
     this.eachI((y, x) => [y, w - x])
   }
 
@@ -100,7 +100,7 @@ export default class SBM {
   }
 
   rotCW() {
-    const [_, w] = this.size
+    const [, w] = this.size
     this.eachI((y, x) => [w - x, y])
   }
 

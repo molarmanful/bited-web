@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Grid } from '$lib/components'
+  import { Grid, Table } from '$lib/components'
 </script>
 
-<Grid />
+<Table />

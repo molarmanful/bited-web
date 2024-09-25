@@ -13,19 +13,16 @@ importers:
         version: 3.7.1(@typescript-eslint/utils@8.6.0(eslint@9.11.0(jiti@1.21.6))(typescript@5.6.2))(@unocss/eslint-plugin@0.62.4(eslint@9.11.0(jiti@1.21.6))(typescript@5.6.2))(@vue/compiler-sfc@3.5.7)(eslint-plugin-format@0.1.2(eslint@9.11.0(jiti@1.21.6)))(eslint-plugin-svelte@2.44.0(eslint@9.11.0(jiti@1.21.6))(svelte@5.0.0-next.257))(eslint@9.11.0(jiti@1.21.6))(svelte-eslint-parser@0.41.1(svelte@5.0.0-next.257))(svelte@5.0.0-next.257)(typescript@5.6.2)
       '@sveltejs/adapter-static':
         specifier: ^3.0.5
-        version: 3.0.5(@sveltejs/kit@2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7))(svelte@5.0.0-next.257)(vite@5.4.7))
+        version: 3.0.5(@sveltejs/kit@2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1)))(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1)))
       '@sveltejs/kit':
         specifier: ^2.5.28
-        version: 2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7))(svelte@5.0.0-next.257)(vite@5.4.7)
+        version: 2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1)))(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: 4.0.0-next.7
-        version: 4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7)
+        version: 4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1))
       '@types/core-js':
         specifier: ^2.5.8
         version: 2.5.8
-      '@unicode/unicode-16.0.0':
-        specifier: ^1.6.0
-        version: 1.6.0
       '@unocss/eslint-plugin':
         specifier: ^0.62.4
         version: 0.62.4(eslint@9.11.0(jiti@1.21.6))(typescript@5.6.2)
@@ -64,10 +61,10 @@ importers:
         version: 8.6.0(eslint@9.11.0(jiti@1.21.6))(typescript@5.6.2)
       unocss:
         specifier: ^0.62.4
-        version: 0.62.4(postcss@8.4.47)(rollup@4.22.2)(vite@5.4.7)
+        version: 0.62.4(postcss@8.4.47)(rollup@4.22.2)(vite@5.4.7(@types/node@22.7.1))
       vite:
         specifier: ^5.4.7
-        version: 5.4.7
+        version: 5.4.7(@types/node@22.7.1)
 
 packages:
 
@@ -706,6 +703,9 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
+  '@types/node@22.7.1':
+    resolution: {integrity: sha512-adOMRLVmleuWs/5V/w5/l7o0chDK/az+5ncCsIapTKogsu/3MVWvSgP58qVTXi5IwpfGt8pMobNq9rOWtJyu5Q==}
+
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
@@ -768,9 +768,6 @@ packages:
   '@typescript-eslint/visitor-keys@8.6.0':
     resolution: {integrity: sha512-wapVFfZg9H0qOYh4grNVQiMklJGluQrOUiOhYRrQWhx7BY/+I1IYb8BczWNbbUpO+pqy0rDciv3lQH5E1bCLrg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@unicode/unicode-16.0.0@1.6.0':
-    resolution: {integrity: sha512-LhZuBZWKR5BTzMK7qEEzjN4sw/Ke4hWAXNNmvWfBn5sKGXtStwlvDmlUxgwEPC4/+Al25f4trBGna3iDZi/Syg==}
 
   '@unocss/astro@0.62.4':
     resolution: {integrity: sha512-98KfkbrNhBLx2+uYxMiGsldIeIZ6/PbL4yaGRHeHoiHd7p4HmIyCF+auYe4Psntx3Yr8kU+XSIAhGDYebvTidQ==}
@@ -2250,6 +2247,9 @@ packages:
   unconfig@0.5.5:
     resolution: {integrity: sha512-VQZ5PT9HDX+qag0XdgQi8tJepPhXiR/yVOkn707gJDKo31lGjRilPREiQJ9Z6zd/Ugpv6ZvO5VxVIcatldYcNQ==}
 
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
+
   unist-util-is@6.0.0:
     resolution: {integrity: sha512-2qCTHimwdxLfz+YzdGfkqNlH0tLi9xjTnHddPmJwtIG9MGsdbutfTc4P+haPD7l7Cjxf/WZj+we5qfVPvvxfYw==}
 
@@ -2816,13 +2816,13 @@ snapshots:
       - supports-color
       - typescript
 
-  '@sveltejs/adapter-static@3.0.5(@sveltejs/kit@2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7))(svelte@5.0.0-next.257)(vite@5.4.7))':
+  '@sveltejs/adapter-static@3.0.5(@sveltejs/kit@2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1)))(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1)))':
     dependencies:
-      '@sveltejs/kit': 2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7))(svelte@5.0.0-next.257)(vite@5.4.7)
+      '@sveltejs/kit': 2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1)))(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1))
 
-  '@sveltejs/kit@2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7))(svelte@5.0.0-next.257)(vite@5.4.7)':
+  '@sveltejs/kit@2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1)))(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7)
+      '@sveltejs/vite-plugin-svelte': 4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1))
       '@types/cookie': 0.6.0
       cookie: 0.6.0
       devalue: 5.0.0
@@ -2836,27 +2836,27 @@ snapshots:
       sirv: 2.0.4
       svelte: 5.0.0-next.257
       tiny-glob: 0.2.9
-      vite: 5.4.7
+      vite: 5.4.7(@types/node@22.7.1)
 
-  '@sveltejs/vite-plugin-svelte-inspector@3.0.0-next.3(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7))(svelte@5.0.0-next.257)(vite@5.4.7)':
+  '@sveltejs/vite-plugin-svelte-inspector@3.0.0-next.3(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1)))(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7)
+      '@sveltejs/vite-plugin-svelte': 4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1))
       debug: 4.3.7
       svelte: 5.0.0-next.257
-      vite: 5.4.7
+      vite: 5.4.7(@types/node@22.7.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7)':
+  '@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 3.0.0-next.3(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7))(svelte@5.0.0-next.257)(vite@5.4.7)
+      '@sveltejs/vite-plugin-svelte-inspector': 3.0.0-next.3(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1)))(svelte@5.0.0-next.257)(vite@5.4.7(@types/node@22.7.1))
       debug: 4.3.7
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.11
       svelte: 5.0.0-next.257
-      vite: 5.4.7
-      vitefu: 1.0.2(vite@5.4.7)
+      vite: 5.4.7(@types/node@22.7.1)
+      vitefu: 1.0.2(vite@5.4.7(@types/node@22.7.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -2881,6 +2881,11 @@ snapshots:
       '@types/unist': 3.0.3
 
   '@types/ms@0.7.34': {}
+
+  '@types/node@22.7.1':
+    dependencies:
+      undici-types: 6.19.8
+    optional: true
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -2967,15 +2972,13 @@ snapshots:
       '@typescript-eslint/types': 8.6.0
       eslint-visitor-keys: 3.4.3
 
-  '@unicode/unicode-16.0.0@1.6.0': {}
-
-  '@unocss/astro@0.62.4(rollup@4.22.2)(vite@5.4.7)':
+  '@unocss/astro@0.62.4(rollup@4.22.2)(vite@5.4.7(@types/node@22.7.1))':
     dependencies:
       '@unocss/core': 0.62.4
       '@unocss/reset': 0.62.4
-      '@unocss/vite': 0.62.4(rollup@4.22.2)(vite@5.4.7)
+      '@unocss/vite': 0.62.4(rollup@4.22.2)(vite@5.4.7(@types/node@22.7.1))
     optionalDependencies:
-      vite: 5.4.7
+      vite: 5.4.7(@types/node@22.7.1)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -3114,7 +3117,7 @@ snapshots:
     dependencies:
       '@unocss/core': 0.62.4
 
-  '@unocss/vite@0.62.4(rollup@4.22.2)(vite@5.4.7)':
+  '@unocss/vite@0.62.4(rollup@4.22.2)(vite@5.4.7(@types/node@22.7.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.1.0(rollup@4.22.2)
@@ -3124,7 +3127,7 @@ snapshots:
       chokidar: 3.6.0
       magic-string: 0.30.11
       tinyglobby: 0.2.6
-      vite: 5.4.7
+      vite: 5.4.7(@types/node@22.7.1)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -4757,6 +4760,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  undici-types@6.19.8:
+    optional: true
+
   unist-util-is@6.0.0:
     dependencies:
       '@types/unist': 3.0.3
@@ -4776,9 +4782,9 @@ snapshots:
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
 
-  unocss@0.62.4(postcss@8.4.47)(rollup@4.22.2)(vite@5.4.7):
+  unocss@0.62.4(postcss@8.4.47)(rollup@4.22.2)(vite@5.4.7(@types/node@22.7.1)):
     dependencies:
-      '@unocss/astro': 0.62.4(rollup@4.22.2)(vite@5.4.7)
+      '@unocss/astro': 0.62.4(rollup@4.22.2)(vite@5.4.7(@types/node@22.7.1))
       '@unocss/cli': 0.62.4(rollup@4.22.2)
       '@unocss/core': 0.62.4
       '@unocss/postcss': 0.62.4(postcss@8.4.47)
@@ -4794,9 +4800,9 @@ snapshots:
       '@unocss/transformer-compile-class': 0.62.4
       '@unocss/transformer-directives': 0.62.4
       '@unocss/transformer-variant-group': 0.62.4
-      '@unocss/vite': 0.62.4(rollup@4.22.2)(vite@5.4.7)
+      '@unocss/vite': 0.62.4(rollup@4.22.2)(vite@5.4.7(@types/node@22.7.1))
     optionalDependencies:
-      vite: 5.4.7
+      vite: 5.4.7(@types/node@22.7.1)
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -4819,17 +4825,18 @@ snapshots:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
 
-  vite@5.4.7:
+  vite@5.4.7(@types/node@22.7.1):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.47
       rollup: 4.22.2
     optionalDependencies:
+      '@types/node': 22.7.1
       fsevents: 2.3.3
 
-  vitefu@1.0.2(vite@5.4.7):
+  vitefu@1.0.2(vite@5.4.7(@types/node@22.7.1)):
     optionalDependencies:
-      vite: 5.4.7
+      vite: 5.4.7(@types/node@22.7.1)
 
   vue-eslint-parser@9.4.3(eslint@9.11.0(jiti@1.21.6)):
     dependencies:

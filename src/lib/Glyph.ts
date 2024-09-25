@@ -38,7 +38,7 @@ export default class Glyph {
   }
 
   get bbx(): [number, number, number, number] {
-    const [h, w, _, xmin, ymax] = this.mat.box
+    const [h, w, , xmin, ymax] = this.mat.box
     if (h === 0 && w === 0)
       return [0, 0, 0, 0]
     const [oy, ox] = this.origin
