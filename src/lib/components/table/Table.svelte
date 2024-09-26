@@ -44,8 +44,8 @@
 
 {#if umap}
   <div
-    style:grid-template-columns='repeat(auto-fit, minmax({csz}px, 1fr))'
-    class='grid gap-1px b-(1 black) bg-black'
+    style:grid-template-columns='repeat(auto-fill, {csz}px)'
+    class='grid justify-center gap-1px b-(1 black) bg-black'
   >
     {#each [...umap.entries()].slice(0, 1024) as [code]}
       <div style:width='{csz}px' class='flex flex-col items-center bg-white'>
