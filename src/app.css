@@ -1,2 +1,16 @@
+@import 'https://stgiga.github.io/UnifontEX/UnifontExMono.css';
+
 :root {
+  @apply font-sans1;
+}
+
+canvas {
+  @apply image-render-pixel;
+}
+
+.uni {
+  @apply text-16px contrast-100.00001 leading-none;
+  font-family: UnifontExMono, monospace;
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
 }

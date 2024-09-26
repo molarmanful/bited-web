@@ -57,7 +57,7 @@
   <div
     style:padding-top='{man.odd}px'
     style:padding-left='{man.odd}px'
-    class='{clazz} image-render-pixel cursor-crosshair m-auto overflow-auto'
+    class='{clazz} cursor-crosshair m-auto overflow-auto'
     use:render
     {...rest}
   ></div>
