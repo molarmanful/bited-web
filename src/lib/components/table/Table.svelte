@@ -3,15 +3,14 @@
 
   import getUMap from '$lib/Unicode'
 
-  let devicePixelRatio = $state(1)
+  let dpr_ = $state(1)
+  const dpr = $derived(+dpr_.toFixed(2))
+  const dprd = $derived(dpr % 1)
+  const scale = $derived(dprd > 0 && dprd < 1 ? 1 / dpr : 1)
+  const fsz = $derived(16 * scale)
+  const csz = $derived(32)
 
-  const fsz = $derived(16 * (
-    devicePixelRatio % 1 < 0.5
-      ? 1 / devicePixelRatio
-      : devicePixelRatio
-  ))
-
-  const csz = $state(32)
+  $inspect(dpr, scale, fsz)
 
   $effect(() => {
     document.body.style.setProperty('--fsz', `${fsz}px`)
@@ -41,7 +40,7 @@
   }
 </script>
 
-<svelte:window bind:devicePixelRatio />
+<svelte:window bind:devicePixelRatio={dpr_} />
 
 {#if umap}
   <div
@@ -49,12 +48,12 @@
     class='grid gap-1px b-(1 black) bg-black'
   >
     {#each [...umap.entries()].slice(0, 1024) as [code]}
-      <div class='w-32px flex flex-col items-center bg-white'>
+      <div style:width='{csz}px' class='flex flex-col items-center bg-white'>
         <code style:height='{fsz}px' class='uni my-1'>
           {String.fromCodePoint(code)}
         </code>
         <div class='h-0 w-full b-(t-1 black)'></div>
-        <canvas height={csz} width={csz}></canvas>
+        <canvas class='bg-slate-300' height={csz} width={csz}></canvas>
       </div>
     {/each}
   </div>
