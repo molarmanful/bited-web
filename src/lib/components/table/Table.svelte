@@ -15,9 +15,9 @@
 
   class Px {
     dpr = $derived(+devicePixelRatio.toFixed(2))
-    dprm = $derived(this.dpr % 1)
-    scale = $derived(this.dprm > 0 && this.dprm < 1 ? 1 / this.dpr : 1)
-    fsz = $derived(16)
+    dprd = $derived(this.dpr | 0)
+    scale = $derived(this.dprd / this.dpr)
+    fsz = $derived(16 * this.scale)
     csz = $derived(32)
   }
 
