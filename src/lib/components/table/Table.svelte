@@ -10,8 +10,6 @@
   const fsz = $derived(16 * scale)
   const csz = $derived(32)
 
-  $inspect(dpr, scale, fsz)
-
   $effect(() => {
     document.body.style.setProperty('--fsz', `${fsz}px`)
   })
