@@ -3,8 +3,8 @@
 
   import getUMap from '$lib/Unicode'
 
-  let dpr_ = $state(1)
-  const dpr = $derived(+dpr_.toFixed(2))
+  let devicePixelRatio = $state(1)
+  const dpr = $derived(+devicePixelRatio.toFixed(2))
   const dprd = $derived(dpr % 1)
   const scale = $derived(dprd > 0 && dprd < 1 ? 1 / dpr : 1)
   const fsz = $derived(16 * scale)
@@ -40,7 +40,7 @@
   }
 </script>
 
-<svelte:window bind:devicePixelRatio={dpr_} />
+<svelte:window bind:devicePixelRatio />
 
 {#if umap}
   <div
