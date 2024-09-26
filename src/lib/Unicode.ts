@@ -9,10 +9,10 @@ export interface Char {
 export default () => {
   const loader = new DataLoader()
 
-  return new Promise((res) => {
+  return new Promise<[number, Char][]>((res) => {
     loader.onmessage = ({ data }) => {
       loader.terminate()
-      res(new Map(data as [number, Char][]))
+      res(data as [number, Char][])
     }
   })
 }

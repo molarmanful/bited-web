@@ -1,26 +1,91 @@
 <script lang='ts'>
   import type { Action } from 'svelte/action'
 
-  import getUMap from '$lib/Unicode'
+  import getUArr from '$lib/Unicode'
+
+  interface Props {
+    cw: number
+  }
+
+  const { cw }: Props = $props()
 
   let devicePixelRatio = $state(1)
-  const dpr = $derived(+devicePixelRatio.toFixed(2))
-  const dprd = $derived(dpr % 1)
-  const scale = $derived(dprd > 0 && dprd < 1 ? 1 / dpr : 1)
-  const fsz = $derived(16 * scale)
-  const csz = $derived(32)
+  let scrollY = $state(0)
+  let innerHeight = $state(0)
+
+  class Px {
+    dpr = $derived(+devicePixelRatio.toFixed(2))
+    dprm = $derived(this.dpr % 1)
+    scale = $derived(this.dprm > 0 && this.dprm < 1 ? 1 / this.dpr : 1)
+    fsz = $derived(16)
+    csz = $derived(32)
+  }
+
+  const px = new Px()
 
   $effect(() => {
-    document.body.style.setProperty('--fsz', `${fsz}px`)
+    document.body.style.setProperty('--fsz', `${px.fsz}px`)
   })
 
-  let umap = $state<Awaited<ReturnType<typeof getUMap>>>()
+  let uarr = $state<Awaited<ReturnType<typeof getUArr>>>([])
 
   $effect(() => {
-    getUMap().then((res) => {
-      umap = res
+    getUArr().then((res) => {
+      uarr = res
     })
   })
+
+  class Virt {
+    len = $derived(uarr.length)
+
+    vh = $derived(px.fsz + 8 + px.scale + px.csz)
+    vw = $derived(px.csz)
+    gap = $derived(px.scale)
+    gh = $derived(this.vh + this.gap)
+    gw = $derived(this.vw + this.gap)
+
+    cols = $derived(cw / this.gw | 0)
+    rows = $derived(Math.ceil(this.len / this.cols))
+    h = $derived(this.rows * this.gh + this.gap)
+    w = $derived(this.cols * this.gw + this.gap)
+
+    rowD = $derived(Math.ceil(innerHeight / this.gh))
+    rowS = $derived(Math.ceil(this.rowD))
+    rowT = $derived(scrollY / this.gh | 0)
+    rowB = $derived(this.rowT + this.rowD)
+    row0 = $derived(Math.max(0, this.rowT - this.rowS))
+    row1 = $derived(Math.min(this.len, this.rowB + this.rowS))
+
+    i0 = $derived(this.row0 * this.cols)
+    i1 = $derived(Math.min(this.row1 * (this.cols + 1), this.len))
+
+    items = $derived.by(() => {
+      const res = []
+      let x = 0
+      let y = this.row0
+
+      for (let i = this.i0; i < this.i1; i++) {
+        const [k, v] = uarr[i]
+
+        res.push({
+          x: x * this.gw,
+          y: y * this.gh,
+          k,
+          v,
+        })
+
+        x++
+        if (x >= this.cols) {
+          x = 0
+          y++
+        }
+      }
+
+      return res
+    })
+  }
+
+  const virt = new Virt()
 
   const perf: Action = (node) => {
     const abort = new AbortController()
@@ -38,20 +103,26 @@
   }
 </script>
 
-<svelte:window bind:devicePixelRatio />
+<svelte:window bind:devicePixelRatio bind:scrollY bind:innerHeight />
 
-{#if umap}
+{#if uarr.length}
   <div
-    style:grid-template-columns='repeat(auto-fill, {csz}px)'
-    class='grid justify-center gap-1px b-(1 black) bg-black'
+    style:height='{virt.h}px'
+    style:width='{virt.w}px'
+    class='relative mx-auto my-4 b-(1 black) bg-black'
   >
-    {#each [...umap.entries()].slice(0, 1024) as [code]}
-      <div style:width='{csz}px' class='flex flex-col items-center bg-white'>
-        <code style:height='{fsz}px' class='uni my-1'>
-          {String.fromCodePoint(code)}
+    {#each virt.items as { x, y, k } (k)}
+      <div
+        style:width='{virt.vw}px'
+        style:left='{x}px'
+        style:top='{y}px'
+        class='absolute flex flex-col items-center bg-white'
+      >
+        <code style:height='{px.fsz}px' class='uni my-1'>
+          {String.fromCodePoint(k)}
         </code>
         <div class='h-0 w-full b-(t-1 black)'></div>
-        <canvas class='bg-slate-300' height={csz} width={csz}></canvas>
+        <canvas class='bg-slate-300' height={virt.vw} width={virt.vw}></canvas>
       </div>
     {/each}
   </div>
