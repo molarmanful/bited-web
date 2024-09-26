@@ -9,7 +9,8 @@ canvas {
 }
 
 .uni {
-  @apply text-16px contrast-100.00001 leading-none;
+  @apply contrast-100.00001 leading-none;
+  font-size: var(--fsz, 16px);
   font-family: UnifontExMono, monospace;
   text-size-adjust: none;
   -webkit-text-size-adjust: none;
