@@ -17,15 +17,30 @@
     dpr = $derived(+devicePixelRatio.toFixed(2))
     dprd = $derived(this.dpr | 0)
     scale = $derived(this.dprd / this.dpr)
+    comp = $state(0)
     fsz = $derived(16 * this.scale)
     csz = $derived(32)
   }
 
   const px = new Px()
+  $inspect(px.dpr, px.comp)
 
   $effect(() => {
     document.body.style.setProperty('--fsz', `${px.fsz}px`)
   })
+
+  const perf: Action = (node) => {
+    const abort = new AbortController()
+    const f = () => {
+      const { x } = node.getBoundingClientRect()
+      px.comp = -(x / px.scale % 1) * px.scale
+    }
+
+    f()
+    addEventListener('resize', f, { signal: abort.signal })
+
+    return { destroy: () => abort.abort() }
+  }
 
   let uarr = $state<Awaited<ReturnType<typeof getUArr>>>([])
 
@@ -86,21 +101,6 @@
   }
 
   const virt = new Virt()
-
-  const perf: Action = (node) => {
-    const abort = new AbortController()
-    const f = () => {
-      requestAnimationFrame(() => {
-        const { x, y } = node.getBoundingClientRect()
-        node.style.transform = `translate(${-x % 1}px, ${-y % 1}px)`
-      })
-    }
-
-    f()
-    addEventListener('resize', f, { signal: abort.signal })
-
-    return { destroy: () => abort.abort() }
-  }
 </script>
 
 <svelte:window bind:devicePixelRatio bind:scrollY bind:innerHeight />
@@ -109,7 +109,9 @@
   <div
     style:height='{virt.h}px'
     style:width='{virt.w}px'
+    style:padding-left='{px.comp}px'
     class='relative mx-auto my-4 b-(1 black) bg-black'
+    use:perf
   >
     {#each virt.items as { x, y, k } (k)}
       <div
