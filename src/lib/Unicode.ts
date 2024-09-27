@@ -9,15 +9,19 @@ interface Char {
 }
 
 export type Data = [number, Char][]
-export type Blocks = Record<string, [number, number]>
+export type Blocks = Map<string, [number, number]>
 
-const load = <T>(name: string, url: string) => () => new Promise<T>((res) => {
+const load = <T>(
+  name: string,
+  url: string,
+  f = (x: any) => x as T,
+) => () => new Promise<T>((res) => {
   const l = new DataLoader()
   l.postMessage({ name, url })
-  l.onmessage = ({ data }) => res(data as T)
+  l.onmessage = ({ data }) => res(f(data))
 })
 
 export default {
   data: load<Data>('uc_data', dataURL),
-  blocks: load<Blocks>('uc_blocks', blocksURL),
+  blocks: load<Blocks>('uc_blocks', blocksURL, x => new Map(x)),
 }

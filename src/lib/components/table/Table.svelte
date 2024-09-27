@@ -31,24 +31,29 @@
     dataA = $state.raw<Data>([])
     data = $derived(new Map(this.dataA))
 
-    blocks = $state.raw<Blocks>({})
+    blocks = $state.raw<Blocks>(new Map())
     block = $state<string>('all')
 
     view = $derived.by(() => {
-      // TODO: block = glyph
       if (this.block === 'all') {
         return this.dataA
       }
-      if (this.block in this.blocks) {
-        const [i0, i1] = this.blocks[this.block]
+
+      const block = this.blocks.get(this.block)
+      if (block) {
+        const [i0, i1] = block
+
         const res: Data = []
         for (let i = i0; i <= i1; i++) {
           const c = this.data.get(i)
           if (c)
             res.push([i, c])
         }
+
         return res
       }
+
+      // TODO: glyph view default
       return this.dataA
     })
 
@@ -119,6 +124,13 @@
 
 {#if uc.view.length}
   <div class='mx-auto my-8 w-fit'>
+    <select bind:value={uc.block}>
+      <option selected value='all'>Unicode</option>
+      {#each uc.blocks.keys() as block}
+        <option>{block}</option>
+      {/each}
+    </select>
+
     <div
       style:height='{virt.h}px'
       style:width='{virt.w}px'

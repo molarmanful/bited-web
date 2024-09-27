@@ -31,7 +31,7 @@ const getBlocks = async () => {
     input: await toStream('https://unicode.org/Public/UNIDATA/Blocks.txt'),
   })
 
-  const a = {}
+  const a = []
   for await (const line of lines) {
     if (line.startsWith('#') || /^\s*$/.test(line))
       continue
@@ -39,7 +39,7 @@ const getBlocks = async () => {
     const [range, name] = line.split('; ')
     const [start, end] = range.split('..')
 
-    a[name] = [+`0x${start}`, +`0x${end}` + 1]
+    a.push([name, [+`0x${start}`, +`0x${end}` + 1]])
   }
 
   await writeFile('src/lib/uc/blocks.json', JSON.stringify(a))
