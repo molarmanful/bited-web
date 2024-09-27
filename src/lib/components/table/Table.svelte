@@ -131,8 +131,11 @@
   <div class='mx-auto my-8 w-fit'>
     <select bind:value={uc.block}>
       <option selected value='all'>Unicode</option>
-      {#each uc.blocks.keys() as block}
-        <option>{block}</option>
+      {#each uc.blocks as [name, [start, end]]}
+        <option value={name}>
+          {name}
+          ({start.toString(16).padStart(4, '0')}-{(end - 1).toString(16).padStart(4, '0')})
+        </option>
       {/each}
     </select>
 
