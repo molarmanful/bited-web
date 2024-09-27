@@ -22,4 +22,5 @@ rl.on('line', (line) => {
 
 rl.once('close', async () => {
   await writeFile('src/lib/data.json', JSON.stringify(res))
+  await writeFile('src/lib/ver.js', `export default ${Date.now()}`)
 })

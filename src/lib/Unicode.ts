@@ -11,7 +11,6 @@ export default () => {
 
   return new Promise<[number, Char][]>((res) => {
     loader.onmessage = ({ data }) => {
-      loader.terminate()
       res(data as [number, Char][])
     }
   })
