@@ -5,9 +5,12 @@ declare global {
     // interface Error {}
     // interface Locals {}
     // interface PageData {}
-    // interface PageState {}
+    interface PageState {
+      char?: number
+      cp?: string
+    }
     // interface Platform {}
   }
 }
 
-export {}
+export { }

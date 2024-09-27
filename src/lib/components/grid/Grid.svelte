@@ -1,14 +1,13 @@
 <script lang='ts'>
   import type { Action } from 'svelte/action'
-  import type { HTMLAttributes } from 'svelte/elements'
 
   import Man from './Man.svelte'
 
-  interface Props extends HTMLAttributes<HTMLDivElement> {
-    clazz?: string
+  interface Props {
+    char: number
   }
 
-  const { clazz = '', ...rest }: Props = $props()
+  const { char, ...rest }: Props = $props()
 
   let innerHeight = $state(0)
   let innerWidth = $state(0)
@@ -57,7 +56,7 @@
   <div
     style:padding-top='{man.odd}px'
     style:padding-left='{man.odd}px'
-    class='{clazz} cursor-crosshair m-auto overflow-auto'
+    class='m-auto cursor-crosshair overflow-auto'
     use:render
     {...rest}
   ></div>

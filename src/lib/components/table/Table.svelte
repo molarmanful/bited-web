@@ -1,11 +1,14 @@
 <script lang='ts'>
+  import { pushState, replaceState } from '$app/navigation'
   import UC, { type Blocks, type Data } from '$lib/Unicode'
+  import { SvelteSet } from 'svelte/reactivity'
 
   interface Props {
     cw: number
+    cp?: string
   }
 
-  const { cw }: Props = $props()
+  const { cw, cp = '' }: Props = $props()
 
   let devicePixelRatio = $state(1)
   let scrollY = $state(0)
@@ -28,11 +31,13 @@
   const px = new Px()
 
   class Uc {
+    ready = $state(false)
+
     dataA = $state.raw<Data>([])
     data = $derived(new Map(this.dataA))
 
     blocks = $state.raw<Blocks>(new Map())
-    block = $state<string>('all')
+    block = $state<string>(cp)
 
     view = $derived.by(() => {
       if (this.block === 'all') {
@@ -59,8 +64,12 @@
 
     constructor() {
       $effect(() => {
-        UC.data().then(res => this.dataA = res)
-        UC.blocks().then(res => this.blocks = res)
+        Promise.all([
+          UC.data().then(res => this.dataA = res),
+          UC.blocks().then(res => this.blocks = res),
+        ]).then(() => {
+          this.ready = true
+        })
       })
     }
   }
@@ -123,14 +132,55 @@
   }
 
   const virt = new Virt()
+
+  class State {
+    sel = new SvelteSet()
+    down = false
+
+    changeBlock() {
+      replaceState('', { cp: uc.block })
+      this.sel.clear()
+    }
+
+    startSel(k: number) {
+      this.down = true
+      this.sel.add(k)
+    }
+
+    updateSel(k: number) {
+      if (!this.down)
+        return
+      this.sel.add(k)
+    }
+
+    edit(k: number) {
+      if (this.sel.has(k))
+        replaceState('', { char: k })
+    }
+
+    endSel() {
+      this.down = false
+    }
+  }
+
+  const st = new State()
+  $inspect(st.down)
 </script>
 
-<svelte:window bind:devicePixelRatio bind:scrollY bind:innerHeight />
+<svelte:window
+  onpointerup={() => st.endSel()}
+  bind:devicePixelRatio
+  bind:scrollY
+  bind:innerHeight
+/>
 
-{#if uc.view.length}
+{#if uc.ready}
   <div class='mx-auto my-8 w-fit'>
-    <select bind:value={uc.block}>
-      <option selected value='all'>Unicode</option>
+    <select
+      onchange={st.changeBlock}
+      bind:value={uc.block}
+    >
+      <option value='all'>Unicode</option>
       {#each uc.blocks as [name, [start, end]]}
         <option value={name}>
           {name}
@@ -146,18 +196,21 @@
       use:virt.offTop
     >
       {#each virt.items as { x, y, k } (k)}
-        <div
+        <button
           style:width='{virt.vw}px'
           style:left='{x}px'
           style:top='{y}px'
           class='absolute flex flex-col items-center bg-white'
+          onclick={() => st.edit(k)}
+          onpointerdown={() => st.startSel(k)}
+          onpointerover={() => st.updateSel(k)}
         >
           <code style:height='{px.fsz}px' class='uni my-1'>
             {String.fromCodePoint(k)}
           </code>
           <div class='h-0 w-full b-(t-1 black)'></div>
-          <canvas class='bg-slate-300' height={virt.vw} width={virt.vw}></canvas>
-        </div>
+          <canvas class="{st.sel.has(k) ? 'bg-blue' : 'bg-slate-300'} " height={virt.vw} width={virt.vw}></canvas>
+        </button>
       {/each}
     </div>
   </div>
