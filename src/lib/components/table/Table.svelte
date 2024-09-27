@@ -83,7 +83,8 @@
 
     rowD = $derived(Math.ceil(innerHeight / this.gh))
     rowS = $derived(Math.ceil(this.rowD))
-    rowT = $derived(scrollY / this.gh | 0)
+    top = $state(0)
+    rowT = $derived((scrollY + this.top) / this.gh | 0)
     rowB = $derived(this.rowT + this.rowD)
     row0 = $derived(Math.max(0, this.rowT - this.rowS))
     row1 = $derived(Math.min(this.len, this.rowB + this.rowS))
@@ -115,6 +116,10 @@
 
       return res
     })
+
+    offTop(node: HTMLElement) {
+      this.top = node.offsetTop
+    }
   }
 
   const virt = new Virt()
@@ -135,6 +140,7 @@
       style:height='{virt.h}px'
       style:width='{virt.w}px'
       class='relative skew-.0000000001 b-(1 black) bg-black'
+      use:virt.offTop
     >
       {#each virt.items as { x, y, k } (k)}
         <div
