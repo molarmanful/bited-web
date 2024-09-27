@@ -5,12 +5,12 @@ import { Readable } from 'node:stream'
 const toStream = async url => Readable.fromWeb((await fetch(url)).body)
 
 const getData = async () => {
-  const rl = createInterface({
+  const lines = createInterface({
     input: await toStream('https://unicode.org/Public/UNIDATA/UnicodeData.txt'),
   })
 
   const a = []
-  for await (const line of rl) {
+  for await (const line of lines) {
     /* eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars */
     const [code, name, category, canon, bi, decomp, dec, digit, num, mirrored, name1, upper, lower, title]
       = line.split(';')
@@ -27,12 +27,12 @@ const getData = async () => {
 }
 
 const getBlocks = async () => {
-  const rl = createInterface({
+  const lines = createInterface({
     input: await toStream('https://unicode.org/Public/UNIDATA/Blocks.txt'),
   })
 
   const a = []
-  for await (const line of rl) {
+  for await (const line of lines) {
     if (line.startsWith('#') || /^\s*$/.test(line))
       continue
 
