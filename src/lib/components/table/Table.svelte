@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import getUArr from '$lib/Unicode'
+  import UC, { type Blocks, type Data } from '$lib/Unicode'
 
   interface Props {
     cw: number
@@ -15,27 +15,55 @@
     dpr = $derived(+devicePixelRatio.toFixed(2))
     dprd = $derived(this.dpr | 0)
     scale = $derived(this.dprd / this.dpr)
-    comp = $state(0)
     fsz = $derived(16 * this.scale)
     csz = $derived(32)
+
+    constructor() {
+      $effect(() => {
+        document.body.style.setProperty('--fsz', `${this.fsz}px`)
+      })
+    }
   }
 
   const px = new Px()
 
-  $effect(() => {
-    document.body.style.setProperty('--fsz', `${px.fsz}px`)
-  })
+  class Uc {
+    dataA = $state.raw<Data>([])
+    data = $derived(new Map(this.dataA))
 
-  let uarr = $state.raw<Awaited<ReturnType<typeof getUArr>>>([])
+    blocks = $state.raw<Blocks>({})
+    block = $state<string>('all')
 
-  $effect(() => {
-    getUArr().then((res) => {
-      uarr = res
+    view = $derived.by(() => {
+      // TODO: block = glyph
+      if (this.block === 'all') {
+        return this.dataA
+      }
+      if (this.block in this.blocks) {
+        const [i0, i1] = this.blocks[this.block]
+        const res: Data = []
+        for (let i = i0; i <= i1; i++) {
+          const c = this.data.get(i)
+          if (c)
+            res.push([i, c])
+        }
+        return res
+      }
+      return this.dataA
     })
-  })
+
+    constructor() {
+      $effect(() => {
+        UC.data().then(res => this.dataA = res)
+        UC.blocks().then(res => this.blocks = res)
+      })
+    }
+  }
+
+  const uc = new Uc()
 
   class Virt {
-    len = $derived(uarr.length)
+    len = $derived(uc.view.length)
 
     vh = $derived(px.fsz + 8 + px.scale + px.csz)
     vw = $derived(px.csz)
@@ -64,7 +92,7 @@
       let y = this.row0
 
       for (let i = this.i0; i < this.i1; i++) {
-        const [k, v] = uarr[i]
+        const [k, v] = uc.view[i]
 
         res.push({
           x: x * this.gw,
@@ -89,8 +117,8 @@
 
 <svelte:window bind:devicePixelRatio bind:scrollY bind:innerHeight />
 
-{#if uarr.length}
-  <div class='mx-auto my-4 w-fit'>
+{#if uc.view.length}
+  <div class='mx-auto my-8 w-fit'>
     <div
       style:height='{virt.h}px'
       style:width='{virt.w}px'

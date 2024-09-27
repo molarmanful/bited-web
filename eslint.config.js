@@ -19,6 +19,7 @@ export default antfu(
       css: true,
       html: true,
     },
+    ignores: ['src/lib/uc'],
   },
   {
     rules: {

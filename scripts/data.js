@@ -23,7 +23,7 @@ const getData = async () => {
     }])
   }
 
-  await writeFile('src/lib/data.json', JSON.stringify(a))
+  await writeFile('src/lib/uc/data.json', JSON.stringify(a))
 }
 
 const getBlocks = async () => {
@@ -31,7 +31,7 @@ const getBlocks = async () => {
     input: await toStream('https://unicode.org/Public/UNIDATA/Blocks.txt'),
   })
 
-  const a = []
+  const a = {}
   for await (const line of lines) {
     if (line.startsWith('#') || /^\s*$/.test(line))
       continue
@@ -39,12 +39,12 @@ const getBlocks = async () => {
     const [range, name] = line.split('; ')
     const [start, end] = range.split('..')
 
-    a.push([+`0x${start}`, +`0x${end}` + 1, name])
+    a[name] = [+`0x${start}`, +`0x${end}` + 1]
   }
 
-  await writeFile('src/lib/blocks.json', JSON.stringify(a))
+  await writeFile('src/lib/uc/blocks.json', JSON.stringify(a))
 }
 
 await getData()
 await getBlocks()
-await writeFile('src/lib/ver.js', `export default ${Date.now()}`)
+await writeFile('src/lib/uc/ver.js', `export default ${Date.now()}`)
