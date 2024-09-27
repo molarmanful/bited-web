@@ -29,7 +29,7 @@ export default class Man {
   lines = new PIXI.Container()
   tiles: PIXI.Sprite[] = []
   resize = () => {
-    this.odd = this.app.renderer.width % 2
+    this.odd = this.app.renderer.width & 1
   }
 
   font = new Font()

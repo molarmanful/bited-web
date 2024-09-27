@@ -1,6 +1,4 @@
 <script lang='ts'>
-  import type { Action } from 'svelte/action'
-
   import getUArr from '$lib/Unicode'
 
   interface Props {
@@ -23,26 +21,12 @@
   }
 
   const px = new Px()
-  $inspect(px.dpr, px.comp)
 
   $effect(() => {
     document.body.style.setProperty('--fsz', `${px.fsz}px`)
   })
 
-  const perf: Action = (node) => {
-    const abort = new AbortController()
-    const f = () => {
-      const { x } = node.getBoundingClientRect()
-      px.comp = -(x / px.scale % 1) * px.scale
-    }
-
-    f()
-    addEventListener('resize', f, { signal: abort.signal })
-
-    return { destroy: () => abort.abort() }
-  }
-
-  let uarr = $state<Awaited<ReturnType<typeof getUArr>>>([])
+  let uarr = $state.raw<Awaited<ReturnType<typeof getUArr>>>([])
 
   $effect(() => {
     getUArr().then((res) => {
@@ -106,28 +90,28 @@
 <svelte:window bind:devicePixelRatio bind:scrollY bind:innerHeight />
 
 {#if uarr.length}
-  <div
-    style:height='{virt.h}px'
-    style:width='{virt.w}px'
-    style:padding-left='{px.comp}px'
-    class='relative mx-auto my-4 b-(1 black) bg-black'
-    use:perf
-  >
-    {#each virt.items as { x, y, k } (k)}
-      <div
-        style:width='{virt.vw}px'
-        style:left='{x}px'
-        style:top='{y}px'
-        class='absolute flex flex-col items-center bg-white'
-      >
-        <code style:height='{px.fsz}px' class='uni my-1'>
-          {String.fromCodePoint(k)}
-        </code>
-        <div class='h-0 w-full b-(t-1 black)'></div>
-        <canvas class='bg-slate-300' height={virt.vw} width={virt.vw}></canvas>
-      </div>
-    {/each}
+  <div class='mx-auto my-4 w-fit'>
+    <div
+      style:height='{virt.h}px'
+      style:width='{virt.w}px'
+      class='relative skew-.0000000001 b-(1 black) bg-black'
+    >
+      {#each virt.items as { x, y, k } (k)}
+        <div
+          style:width='{virt.vw}px'
+          style:left='{x}px'
+          style:top='{y}px'
+          class='absolute flex flex-col items-center bg-white'
+        >
+          <code style:height='{px.fsz}px' class='uni my-1'>
+            {String.fromCodePoint(k)}
+          </code>
+          <div class='h-0 w-full b-(t-1 black)'></div>
+          <canvas class='bg-slate-300' height={virt.vw} width={virt.vw}></canvas>
+        </div>
+      {/each}
+    </div>
   </div>
 {:else}
-  <span>Loading...</span>
+  Loading...
 {/if}
