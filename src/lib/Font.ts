@@ -8,6 +8,7 @@ interface Metrics {
   width: number
 }
 
+// TODO: get/set from localstorage
 export default class Font {
   name = 'FONTNAME'
   metrics: Metrics = {

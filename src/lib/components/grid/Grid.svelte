@@ -52,6 +52,15 @@
     <button onclick={() => man.mode = 'line'}>LINE</button>
   </div>
 
+  {#if st.meta}
+    <div class='font-mono'>
+      {String.fromCodePoint(st.char)}:&nbsp;
+      U+{st.char.toString(16).padStart(4, '0')}&nbsp;
+      {st.meta.category}&nbsp;
+      {st.meta.name}
+    </div>
+  {/if}
+
   <div
     style:padding-top='{man.odd}px'
     style:padding-left='{man.odd}px'

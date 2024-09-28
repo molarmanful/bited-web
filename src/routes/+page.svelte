@@ -9,7 +9,6 @@
 
   const st = new State()
   cState.set(st)
-  $inspect(st)
 
   export const snapshot: Snapshot<{
     char: State['char']
@@ -31,9 +30,15 @@
 </svelte:head>
 
 <div class='mx-auto container' bind:clientWidth={cw}>
-  {#if st.char >= 0}
-    <Grid />
+  {#if st.uc.ready}
+    {#if st.char >= 0}
+      <Grid />
+    {:else}
+      <Table {cw} />
+    {/if}
   {:else}
-    <Table {cw} />
+    <div class='h-screen flex items-center justify-center'>
+      Loading...
+    </div>
   {/if}
 </div>

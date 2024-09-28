@@ -20,11 +20,6 @@ export default class Op {
     ]))
   }
 
-  debug() {
-    console.log(this.man.glyph.bbx)
-    console.log(this.man.glyph.bitmap)
-  }
-
   transpose() {
     this.act(() => {
       this.man.glyph.mat.transpose()
