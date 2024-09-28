@@ -39,6 +39,14 @@ export default class Font {
     this.glyphs.set(glyph.code, glyph)
   }
 
+  has(code: number) {
+    return this.glyphs.has(code)
+  }
+
+  delete(code: number) {
+    this.glyphs.delete(code)
+  }
+
   get size() {
     return this.metrics.asc + this.metrics.desc
   }
