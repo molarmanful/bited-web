@@ -202,6 +202,8 @@ export default class Man {
       )
     }
 
+    // TODO: convert to dark mode
+
     const htints = new Map([
       [oy, this.theme.origin],
       [oy - this.font.metrics.asc, 0xFF0000],

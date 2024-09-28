@@ -44,7 +44,6 @@ export default class SBM {
     this.size = [h, w]
   }
 
-  // TODO: remove?
   check() {
     this.each((y, x, k) => {
       if (!this.in(y, x))

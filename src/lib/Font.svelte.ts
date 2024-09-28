@@ -9,10 +9,10 @@ interface Metrics {
   width: number
 }
 
-// TODO: get/set from localstorage
+// TODO: get/set from idb
 export default class Font {
   name = 'FONTNAME'
-  metrics: Metrics = $state({
+  metrics = $state<Metrics>({
     cap: 9,
     x: 7,
     asc: 14,
