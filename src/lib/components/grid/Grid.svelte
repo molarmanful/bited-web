@@ -1,13 +1,11 @@
 <script lang='ts'>
   import type { Action } from 'svelte/action'
 
+  import { cState } from '$lib/contexts'
+
   import Man from './Man.svelte'
 
-  interface Props {
-    char: number
-  }
-
-  const { char, ...rest }: Props = $props()
+  const st = cState.get()
 
   let innerHeight = $state(0)
   let innerWidth = $state(0)
@@ -26,7 +24,7 @@
 
 <svelte:window bind:innerHeight bind:innerWidth />
 
-<div class='size-screen flex flex-col items-center'>
+<div class='h-screen flex flex-col items-center'>
   <div>
     <form onsubmit={() => {
       man.scale = scale
@@ -39,6 +37,7 @@
     </form>
 
     <button onclick={() => man.op.debug()}>DEBUG</button>
+    <button onclick={() => st.char = -1}>TABLE</button>
 
     <button onclick={() => man.undoman.undo()}>UNDO</button>
     <button onclick={() => man.undoman.redo()}>REDO</button>
@@ -58,6 +57,5 @@
     style:padding-left='{man.odd}px'
     class='m-auto cursor-crosshair overflow-auto'
     use:render
-    {...rest}
   ></div>
 </div>

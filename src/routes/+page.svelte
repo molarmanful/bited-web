@@ -1,20 +1,29 @@
 <script lang='ts'>
-  import { browser } from '$app/environment'
-  import { page } from '$app/stores'
+  import type { Snapshot } from './$types'
+
   import { Grid, Table } from '$lib/components'
-  import { derived } from 'svelte/store'
+  import { cState } from '$lib/contexts'
+  import State from '$lib/State.svelte'
 
   let cw = $state(0)
 
-  const pstate = derived<typeof page, App.PageState>(
-    page,
-    ($page, set) => {
-      if (!browser)
-        return
-      set(history.state['sveltekit:states'] ?? {})
+  const st = new State()
+  cState.set(st)
+  $inspect(st)
+
+  export const snapshot: Snapshot<{
+    char: State['char']
+    block: State['block']
+  }> = {
+    capture: () => ({
+      char: st.char,
+      block: st.block,
+    }),
+    restore(x) {
+      st.char = x.char
+      st.block = x.block
     },
-    {},
-  )
+  }
 </script>
 
 <svelte:head>
@@ -22,9 +31,9 @@
 </svelte:head>
 
 <div class='mx-auto container' bind:clientWidth={cw}>
-  {#if $pstate.char !== void 0}
-    <Grid char={$pstate.char} />
+  {#if st.char >= 0}
+    <Grid />
   {:else}
-    <Table cp={$pstate.cp} {cw} />
+    <Table {cw} />
   {/if}
 </div>

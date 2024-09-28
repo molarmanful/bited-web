@@ -5,10 +5,7 @@ declare global {
     // interface Error {}
     // interface Locals {}
     // interface PageData {}
-    interface PageState {
-      char?: number
-      cp?: string
-    }
+    // interface PageState {}
     // interface Platform {}
   }
 }

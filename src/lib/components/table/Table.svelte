@@ -1,14 +1,14 @@
 <script lang='ts'>
-  import { pushState, replaceState } from '$app/navigation'
+  import { cState } from '$lib/contexts'
   import UC, { type Blocks, type Data } from '$lib/Unicode'
   import { SvelteSet } from 'svelte/reactivity'
 
   interface Props {
     cw: number
-    cp?: string
   }
 
-  const { cw, cp = '' }: Props = $props()
+  const { cw }: Props = $props()
+  const st = cState.get()
 
   let devicePixelRatio = $state(1)
   let scrollY = $state(0)
@@ -37,14 +37,13 @@
     data = $derived(new Map(this.dataA))
 
     blocks = $state.raw<Blocks>(new Map())
-    block = $state<string>(cp)
 
     view = $derived.by(() => {
-      if (this.block === 'all') {
+      if (st.block === 'all') {
         return this.dataA
       }
 
-      const block = this.blocks.get(this.block)
+      const block = this.blocks.get(st.block)
       if (block) {
         const [i0, i1] = block
 
@@ -133,42 +132,51 @@
 
   const virt = new Virt()
 
-  class State {
-    sel = new SvelteSet()
-    down = false
+  class Sel {
+    pivot = $state(-1)
+    endpt = $state(-1)
+    ex = new SvelteSet<number>()
+    min = $derived(Math.min(this.pivot, this.endpt))
+    max = $derived(Math.max(this.pivot, this.endpt))
+    on = false
+
+    isSel(k: number) {
+      return this.min <= k && k <= this.max && !this.ex.has(k)
+    }
 
     changeBlock() {
-      replaceState('', { cp: uc.block })
-      this.sel.clear()
+      this.pivot = this.endpt = -1
+      this.ex.clear()
     }
 
-    startSel(k: number) {
-      this.down = true
-      this.sel.add(k)
+    start(k: number) {
+      this.on = true
+      this.pivot = k
+      this.endpt = k
     }
 
-    updateSel(k: number) {
-      if (!this.down)
+    drag(k: number) {
+      if (!this.on)
         return
-      this.sel.add(k)
+      this.endpt = k
     }
 
     edit(k: number) {
-      if (this.sel.has(k))
-        replaceState('', { char: k })
+      if (!this.isSel(k))
+        return
+      st.char = k
     }
 
-    endSel() {
-      this.down = false
+    end() {
+      this.on = false
     }
   }
 
-  const st = new State()
-  $inspect(st.down)
+  const sel = new Sel()
 </script>
 
 <svelte:window
-  onpointerup={() => st.endSel()}
+  onpointerup={() => sel.end()}
   bind:devicePixelRatio
   bind:scrollY
   bind:innerHeight
@@ -177,8 +185,8 @@
 {#if uc.ready}
   <div class='mx-auto my-8 w-fit'>
     <select
-      onchange={st.changeBlock}
-      bind:value={uc.block}
+      onchange={() => sel.changeBlock()}
+      bind:value={st.block}
     >
       <option value='all'>Unicode</option>
       {#each uc.blocks as [name, [start, end]]}
@@ -201,15 +209,15 @@
           style:left='{x}px'
           style:top='{y}px'
           class='absolute flex flex-col items-center bg-white'
-          onclick={() => st.edit(k)}
-          onpointerdown={() => st.startSel(k)}
-          onpointerover={() => st.updateSel(k)}
+          onclick={() => sel.edit(k)}
+          onpointerdown={() => sel.start(k)}
+          onpointerover={() => sel.drag(k)}
         >
           <code style:height='{px.fsz}px' class='uni my-1'>
             {String.fromCodePoint(k)}
           </code>
           <div class='h-0 w-full b-(t-1 black)'></div>
-          <canvas class="{st.sel.has(k) ? 'bg-blue' : 'bg-slate-300'} " height={virt.vw} width={virt.vw}></canvas>
+          <canvas class="{sel.isSel(k) ? 'bg-blue' : 'bg-slate-300'} " height={virt.vw} width={virt.vw}></canvas>
         </button>
       {/each}
     </div>
