@@ -40,6 +40,7 @@
     <button onclick={() => man.undoman.undo()}>UNDO</button>
     <button onclick={() => man.undoman.redo()}>REDO</button>
 
+    <button onclick={() => man.op.clear()}>CLEAR</button>
     <button onclick={() => man.op.transpose()}>TRANSPOSE</button>
     <button onclick={() => man.op.flipX()}>FLIPX</button>
     <button onclick={() => man.op.flipY()}>FLIPY</button>

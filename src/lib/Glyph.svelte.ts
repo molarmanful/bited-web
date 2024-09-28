@@ -6,6 +6,7 @@ export default class Glyph {
   font: Font
   code: number
   width: number
+  blob = $state<Blob | null>(null)
   mat = new SBM()
 
   constructor(font: Font, code: number) {
@@ -19,6 +20,37 @@ export default class Glyph {
     this.mat.resize(h, w)
     const [oy1, ox1] = this.origin
     this.mat.translate(oy1 - oy0, ox1 - ox0)
+  }
+
+  img(f = () => { }) {
+    const [h, w] = this.mat.size
+    if (h <= 0 || w <= 0)
+      return
+    const cv = document.createElement('canvas')
+    cv.height = h
+    cv.width = w
+    const ctx = cv.getContext('2d')
+    if (!ctx) {
+      console.error('getContext failed')
+      return
+    }
+
+    const imageData = ctx.createImageData(w, h)
+    const { data } = imageData
+
+    this.mat.each((y, x) => {
+      const i = (y * h + x) * 4
+      data[i] = 0
+      data[i + 1] = 0
+      data[i + 2] = 0
+      data[i + 3] = 255
+    })
+
+    ctx.putImageData(imageData, 0, 0)
+    cv.toBlob((blob) => {
+      this.blob = blob
+      f()
+    })
   }
 
   get center(): [number, number] { // y, x

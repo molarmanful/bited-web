@@ -32,8 +32,9 @@
   class Virt {
     len = $derived(st.uc.view.length)
 
-    vh = $derived(px.fsz + 8 + px.scale + st.w)
-    vw = $derived(st.w)
+    vs = $state(2)
+    vw = $derived(st.w * this.vs * px.scale)
+    vh = $derived(px.fsz + 8 + px.scale + this.vw)
     gap = $derived(px.scale)
     gh = $derived(this.vh + this.gap)
     gw = $derived(this.vw + this.gap)
@@ -158,7 +159,8 @@
     use:clickout={() => sel.reset()}
     use:virt.offTop
   >
-    {#each virt.items as { x, y, k } (k)}
+    {#each virt.items as { x, y, k, v } (k)}
+      {@const glyph = st.font.get(k)}
       <button
         style:width='{virt.vw}px'
         style:left='{x}px'
@@ -172,7 +174,21 @@
           {String.fromCodePoint(k)}
         </code>
         <div class='h-0 w-full b-(t-1 black)'></div>
-        <canvas class="{sel.isSel(k) ? 'bg-blue' : 'bg-slate-300'} " height={virt.vw} width={virt.vw}></canvas>
+        {#if glyph && glyph.blob}
+          <img
+            style:height='{virt.vw}px'
+            style:width='{virt.vw}px'
+            class="{sel.isSel(k) ? 'bg-blue' : 'bg-white'} image-render-pixel"
+            alt={v.name}
+            src={URL.createObjectURL(glyph.blob)}
+          />
+        {:else}
+          <div
+            style:height='{virt.vw}px'
+            style:width='{virt.vw}px'
+            class="{sel.isSel(k) ? 'bg-blue' : 'bg-slate-300'} "
+          ></div>
+        {/if}
       </button>
     {/each}
   </div>

@@ -22,5 +22,7 @@ self.onmessage = ({ data: { name, url } }) => {
 
     await LF.setItem(name, data)
     await LF.setItem('uc_ver', ver)
+
+    self.close()
   })()
 }

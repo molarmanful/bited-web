@@ -1,5 +1,5 @@
 import type Font from '$lib/Font'
-import type Glyph from '$lib/Glyph'
+import type Glyph from '$lib/Glyph.svelte'
 import type State from '$lib/State.svelte'
 
 import * as PIXI from 'pixi.js'

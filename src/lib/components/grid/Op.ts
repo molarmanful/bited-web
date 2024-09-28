@@ -20,6 +20,12 @@ export default class Op {
     ]))
   }
 
+  clear() {
+    this.act(() => {
+      this.man.glyph.mat.ks.clear()
+    })
+  }
+
   transpose() {
     this.act(() => {
       this.man.glyph.mat.transpose()
