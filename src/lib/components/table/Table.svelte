@@ -99,6 +99,14 @@
       return this.min <= k && k <= this.max && !this.ex.has(k)
     }
 
+    each(f: (k: number) => void) {
+      for (let k = this.min; k <= this.max; k++) {
+        if (this.ex.has(k))
+          continue
+        f(k)
+      }
+    }
+
     reset() {
       this.end()
       this.pivot = this.endpt = -1
@@ -134,6 +142,15 @@
 </script>
 
 <svelte:window
+  onkeydown={(e) => {
+    switch (e.key) {
+      case 'Delete':
+      case 'Backspace':
+        sel.each(k => st.font.delete(k))
+        sel.reset()
+        break
+    }
+  }}
   onpointerup={() => sel.end()}
   bind:devicePixelRatio
   bind:scrollY
