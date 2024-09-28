@@ -1,4 +1,4 @@
-import type Font from '$lib/Font'
+import type Font from '$lib/Font.svelte'
 import type Glyph from '$lib/Glyph.svelte'
 import type State from '$lib/State.svelte'
 

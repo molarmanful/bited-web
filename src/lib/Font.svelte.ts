@@ -1,4 +1,5 @@
 import Glyph from '$lib/Glyph.svelte'
+import { SvelteMap } from 'svelte/reactivity'
 
 interface Metrics {
   cap: number
@@ -11,15 +12,16 @@ interface Metrics {
 // TODO: get/set from localstorage
 export default class Font {
   name = 'FONTNAME'
-  metrics: Metrics = {
+  metrics: Metrics = $state({
     cap: 9,
     x: 7,
     asc: 14,
     desc: 2,
     width: 8,
-  }
+  })
 
-  glyphs = new Map<number, Glyph>()
+  size = $derived(this.metrics.asc + this.metrics.desc)
+  glyphs = new SvelteMap<number, Glyph>()
 
   useMetrics(metrics: Partial<Metrics>) {
     Object.assign(this.metrics, metrics)
@@ -45,9 +47,5 @@ export default class Font {
 
   delete(code: number) {
     this.glyphs.delete(code)
-  }
-
-  get size() {
-    return this.metrics.asc + this.metrics.desc
   }
 }

@@ -1,4 +1,4 @@
-import Font from '$lib/Font'
+import Font from '$lib/Font.svelte'
 import Uc from '$lib/Uc.svelte'
 
 export default class State {
@@ -13,4 +13,6 @@ export default class State {
   // TODO: scale based on glyph bounds
   scale = $state(4)
   w = $derived(8 * this.scale)
+  vscale = $state(3)
+  vw = $derived(8 * this.vscale)
 }

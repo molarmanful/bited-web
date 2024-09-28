@@ -5,9 +5,9 @@ import type Man from './Man.svelte'
 import { used } from '$lib/util'
 
 export default class UndoMan {
+  man: Man
   undos = $state<UndoItem[]>([])
   redos = $state<UndoItem[]>([])
-  man: Man
 
   constructor(man: Man) {
     this.man = man
@@ -15,7 +15,7 @@ export default class UndoMan {
     $effect(() => {
       used(this.undos, this.redos)
       this.man.font.set(this.man.glyph)
-      this.man.glyph.img(this.man.st.w, this.man.st.w)
+      this.man.glyph.img(this.man.st.vw, this.man.st.vw)
     })
   }
 

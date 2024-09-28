@@ -33,7 +33,7 @@
     len = $derived(st.uc.view.length)
 
     vs = $state(2)
-    vw = $derived(st.w * this.vs * px.scale)
+    vw = $derived(st.vw * this.vs * px.scale)
     vh = $derived(px.fsz + 8 + px.scale + this.vw)
     gap = $derived(px.scale)
     gh = $derived(this.vh + this.gap)
@@ -180,7 +180,7 @@
           <img
             style:height='{virt.vw}px'
             style:width='{virt.vw}px'
-            class="{sel.isSel(k) ? 'bg-blue' : 'bg-white'} image-render-pixel"
+            class="{sel.isSel(k) ? 'bg-blue' : 'bg-white'} image-render-pixel text-white"
             alt={v.name}
             draggable='false'
             src={URL.createObjectURL(glyph.blob)}

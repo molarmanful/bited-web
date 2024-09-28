@@ -1,3 +1,5 @@
+// TODO: consider inversion to preserve sparseness
+
 type KsLike = SBM | Set<string>
 
 export default class SBM {

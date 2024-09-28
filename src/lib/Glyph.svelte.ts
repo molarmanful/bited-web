@@ -1,4 +1,4 @@
-import type Font from '$lib/Font'
+import type Font from '$lib/Font.svelte'
 
 import SBM from '$lib/SBM'
 
@@ -15,14 +15,10 @@ export default class Glyph {
     this.width = this.font.metrics.width
   }
 
-  resize(h: number, w: number) {
-    const [oy0, ox0] = this.origin
-    this.mat.resize(h, w)
-    const [oy1, ox1] = this.origin
-    this.mat.translate(oy1 - oy0, ox1 - ox0)
-  }
-
   img(h: number, w: number, f = () => { }) {
+    const [h0, w0] = this.mat.size
+    this.resize(h, w)
+
     const cv = document.createElement('canvas')
     cv.height = h
     cv.width = w
@@ -36,6 +32,8 @@ export default class Glyph {
     const { data } = imageData
 
     this.mat.each((y, x) => {
+      if (!this.mat.in(y, x))
+        return
       const i = (y * h + x) * 4
       data[i] = 0
       data[i + 1] = 0
@@ -43,11 +41,19 @@ export default class Glyph {
       data[i + 3] = 255
     })
 
+    this.resize(h0, w0)
     ctx.putImageData(imageData, 0, 0)
     cv.toBlob((blob) => {
       this.blob = blob
       f()
     })
+  }
+
+  resize(h: number, w: number) {
+    const [oy0, ox0] = this.origin
+    this.mat.resize(h, w)
+    const [oy1, ox1] = this.origin
+    this.mat.translate(oy1 - oy0, ox1 - ox0)
   }
 
   get center(): [number, number] { // y, x
