@@ -118,8 +118,10 @@
     }
 
     edit(k: number) {
-      if (!this.isSel(k))
+      if (!this.isSel(k)) {
+        this.start(k)
         return
+      }
       st.code = k
     }
 
@@ -161,27 +163,29 @@
   >
     {#each virt.items as { x, y, k, v } (k)}
       {@const glyph = st.font.get(k)}
+
       <button
         style:width='{virt.vw}px'
         style:left='{x}px'
         style:top='{y}px'
         class='absolute flex flex-col items-center bg-white'
         onclick={() => sel.edit(k)}
-        onpointerdown={() => sel.start(k)}
-        onpointerover={() => sel.drag(k)}
       >
         <code style:height='{px.fsz}px' class='uni my-1'>
           {String.fromCodePoint(k)}
         </code>
         <div class='h-0 w-full b-(t-1 black)'></div>
+
         {#if glyph && glyph.blob}
           <img
             style:height='{virt.vw}px'
             style:width='{virt.vw}px'
             class="{sel.isSel(k) ? 'bg-blue' : 'bg-white'} image-render-pixel"
             alt={v.name}
+            draggable='false'
             src={URL.createObjectURL(glyph.blob)}
           />
+
         {:else}
           <div
             style:height='{virt.vw}px'
