@@ -10,7 +10,7 @@
   let innerHeight = $state(0)
   let innerWidth = $state(0)
 
-  const man = new Man()
+  const man = new Man(st)
 
   let scale = $state(man.scale)
   let pw = $state(man.pw)
@@ -36,8 +36,7 @@
       <button type='submit'>UPDATE</button>
     </form>
 
-    <button onclick={() => man.op.debug()}>DEBUG</button>
-    <button onclick={() => st.char = -1}>TABLE</button>
+    <button onclick={() => st.code = -1}>TABLE</button>
 
     <button onclick={() => man.undoman.undo()}>UNDO</button>
     <button onclick={() => man.undoman.redo()}>REDO</button>
@@ -54,8 +53,8 @@
 
   {#if st.meta}
     <div class='font-mono'>
-      {String.fromCodePoint(st.char)}:&nbsp;
-      U+{st.char.toString(16).padStart(4, '0')}&nbsp;
+      {String.fromCodePoint(st.code)}:&nbsp;
+      U+{st.code.toString(16).padStart(4, '0')}&nbsp;
       {st.meta.category}&nbsp;
       {st.meta.name}
     </div>

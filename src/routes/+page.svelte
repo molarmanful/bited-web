@@ -11,15 +11,15 @@
   cState.set(st)
 
   export const snapshot: Snapshot<{
-    char: State['char']
+    code: State['code']
     block: State['block']
   }> = {
     capture: () => ({
-      char: st.char,
+      code: st.code,
       block: st.block,
     }),
     restore(x) {
-      st.char = x.char
+      st.code = x.code
       st.block = x.block
     },
   }
@@ -31,7 +31,7 @@
 
 <div class='mx-auto container' bind:clientWidth={cw}>
   {#if st.uc.ready}
-    {#if st.char >= 0}
+    {#if st.code >= 0}
       <Grid />
     {:else}
       <Table {cw} />

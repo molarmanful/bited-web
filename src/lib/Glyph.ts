@@ -4,14 +4,12 @@ import SBM from '$lib/SBM'
 
 export default class Glyph {
   font: Font
-  name: string
-  code: number = -1
+  code: number
   width: number
   mat = new SBM()
 
-  constructor(font: Font, name: string, code = -1) {
+  constructor(font: Font, code: number) {
     this.font = font
-    this.name = name
     this.code = code
     this.width = this.font.metrics.width
   }

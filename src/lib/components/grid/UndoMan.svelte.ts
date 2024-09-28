@@ -3,12 +3,18 @@ import type SBM from '$lib/SBM'
 import type Man from './Man.svelte'
 
 export default class UndoMan {
-  undos: UndoItem[] = []
-  redos: UndoItem[] = []
+  undos = $state<UndoItem[]>([])
+  redos = $state<UndoItem[]>([])
   man: Man
 
   constructor(man: Man) {
     this.man = man
+
+    $effect(() => {
+      if ([this.undos, this.redos]) {
+        this.man.font.set(this.man.glyph)
+      }
+    })
   }
 
   act(item: UndoItem) {

@@ -16,10 +16,10 @@ export default class Font {
     x: 7,
     asc: 14,
     desc: 2,
-    width: 0,
+    width: 8,
   }
 
-  glyphs = new Map<string, Glyph>()
+  glyphs = new Map<number, Glyph>()
 
   useMetrics(metrics: Partial<Metrics>) {
     Object.assign(this.metrics, metrics)
@@ -31,8 +31,12 @@ export default class Font {
     this.metrics.width = Math.max(0, this.metrics.width | 0)
   }
 
-  addGlyph(name: string, code = -1) {
-    this.glyphs.set(name, new Glyph(this, name, code))
+  get(code: number) {
+    return this.glyphs.get(code) ?? new Glyph(this, code)
+  }
+
+  set(glyph: Glyph) {
+    this.glyphs.set(glyph.code, glyph)
   }
 
   get size() {

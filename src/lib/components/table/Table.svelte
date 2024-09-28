@@ -120,7 +120,7 @@
     edit(k: number) {
       if (!this.isSel(k))
         return
-      st.char = k
+      st.code = k
     }
 
     end() {

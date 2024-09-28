@@ -1,10 +1,12 @@
-import Font from '$lib/Font'
-import Glyph from '$lib/Glyph'
+import type Font from '$lib/Font'
+import type Glyph from '$lib/Glyph'
+import type State from '$lib/State.svelte'
+
 import * as PIXI from 'pixi.js'
 
 import Op from './Op'
 import Tool from './Tool'
-import UndoMan from './UndoMan'
+import UndoMan from './UndoMan.svelte'
 
 type Mode = 'pen' | 'line'
 
@@ -15,6 +17,10 @@ interface Handlers {
 }
 
 export default class Man {
+  st: State
+  font: Font
+  glyph: Glyph
+
   on = false
   // TODO: scale based on glyph bounds
   scale = $state(4)
@@ -32,23 +38,23 @@ export default class Man {
     this.odd = this.app.renderer.width & 1
   }
 
-  font = new Font()
-  // TODO: remove
-  glyph = new Glyph(this.font, 'test')
   undoman = new UndoMan(this)
   tool?: Tool
   op = new Op(this)
 
   #tex_tile?: PIXI.Texture
 
+  constructor(st: State) {
+    this.st = st
+    this.font = this.st.font
+    this.glyph = this.font.get(this.st.code)
+  }
+
   async init(node: HTMLElement) {
     await this.app.init({
       antialias: false,
       background: 0xDDDDDD,
     })
-
-    // TODO: remove
-    this.glyph.width = 8
 
     node.appendChild(this.app.canvas)
 

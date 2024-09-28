@@ -2,10 +2,6 @@ import type State from '$lib/State.svelte'
 
 import UC, { type Blocks, type Data } from '$lib/Unicode'
 
-interface Constructor {
-  st: State
-}
-
 export default class Uc {
   st: State
   ready = $state(false)
@@ -38,7 +34,7 @@ export default class Uc {
     return this.dataA
   })
 
-  constructor({ st }: Constructor) {
+  constructor(st: State) {
     this.st = st
 
     $effect(() => {
