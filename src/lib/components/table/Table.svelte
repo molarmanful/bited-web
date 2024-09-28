@@ -1,6 +1,7 @@
 <script lang='ts'>
   import { cState } from '$lib/contexts'
   import UC, { type Blocks, type Data } from '$lib/Unicode'
+  import { clickout } from '$lib/util'
   import { SvelteSet } from 'svelte/reactivity'
 
   interface Props {
@@ -144,7 +145,8 @@
       return this.min <= k && k <= this.max && !this.ex.has(k)
     }
 
-    changeBlock() {
+    reset() {
+      this.end()
       this.pivot = this.endpt = -1
       this.ex.clear()
     }
@@ -185,7 +187,7 @@
 {#if uc.ready}
   <div class='mx-auto my-8 w-fit'>
     <select
-      onchange={() => sel.changeBlock()}
+      onchange={() => sel.reset()}
       bind:value={st.block}
     >
       <option value='all'>Unicode</option>
@@ -201,6 +203,7 @@
       style:height='{virt.h}px'
       style:width='{virt.w}px'
       class='relative skew-.0000000001 b-(1 black) bg-black'
+      use:clickout={() => sel.reset()}
       use:virt.offTop
     >
       {#each virt.items as { x, y, k } (k)}
