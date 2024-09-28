@@ -41,7 +41,7 @@
     {/if}
   {:else}
     <div class='h-screen flex items-center justify-center'>
-      Loading...
+      loading...
     </div>
   {/if}
 </div>

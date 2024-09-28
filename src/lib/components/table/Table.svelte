@@ -221,6 +221,6 @@
   </div>
 {:else}
   <div class='h-screen flex items-center justify-center'>
-    NO GLYPHS... YET
+    no glyphs... yet
   </div>
 {/if}
