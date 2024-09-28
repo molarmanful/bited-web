@@ -174,7 +174,7 @@
   <div
     style:height='{virt.h}px'
     style:width='{virt.w}px'
-    class='relative skew-.0000000001 b-(1 black) bg-black'
+    class='relative skew-.0000000001 b-(1 bord) bg-bord'
     use:clickout={() => sel.reset()}
     use:virt.offTop
   >
@@ -185,31 +185,34 @@
         style:width='{virt.vw}px'
         style:left='{x}px'
         style:top='{y}px'
-        class='absolute flex flex-col items-center bg-white'
+        class='absolute flex flex-col items-center bg-bg'
         onclick={() => sel.edit(k)}
       >
         <code style:height='{px.fsz}px' class='uni my-1'>
           {String.fromCodePoint(k)}
         </code>
-        <div class='h-0 w-full b-(t-1 black)'></div>
+        <div class='h-0 w-full b-(t-1 bord)'></div>
 
-        {#if glyph && glyph.blob}
-          <img
-            style:height='{virt.vw}px'
-            style:width='{virt.vw}px'
-            class="{sel.isSel(k) ? 'bg-blue' : 'bg-white'} image-render-pixel text-white"
-            alt={v.name}
-            draggable='false'
-            src={URL.createObjectURL(glyph.blob)}
-          />
-
-        {:else}
-          <div
-            style:height='{virt.vw}px'
-            style:width='{virt.vw}px'
-            class="{sel.isSel(k) ? 'bg-blue' : 'bg-slate-300'} "
-          ></div>
-        {/if}
+        <div
+          style:height='{virt.vw}px'
+          style:width='{virt.vw}px'
+          class="{sel.isSel(k)
+            ? 'bg-sel'
+            : glyph && glyph.blob
+            ? 'bg-bg'
+            : 'bg-dis'} "
+        >
+          {#if glyph && glyph.blob}
+            <img
+              style:height='{virt.vw}px'
+              style:width='{virt.vw}px'
+              class='text-transparent image-render-pixel dark:invert'
+              alt={v.name}
+              draggable='false'
+              src={URL.createObjectURL(glyph.blob)}
+            />
+          {/if}
+        </div>
       </button>
     {/each}
   </div>

@@ -2,6 +2,8 @@ import type Font from '$lib/Font.svelte'
 import type Glyph from '$lib/Glyph.svelte'
 import type State from '$lib/State.svelte'
 
+import { used } from '$lib/util'
+import { mode as dmode } from 'mode-watcher'
 import * as PIXI from 'pixi.js'
 
 import Op from './Op'
@@ -21,36 +23,66 @@ export default class Man {
   font: Font
   glyph: Glyph
 
-  on = false
+  on = $state(false)
   pw = $state(12)
   odd = $state(0)
   bw = 1
   mode = $state<Mode>('pen')
 
+  dark = $state(false)
+
   app = new PIXI.Application()
   grid = new PIXI.Container()
   lines = new PIXI.Container()
   tiles: PIXI.Sprite[] = []
-  resize = () => {
-    this.odd = this.app.renderer.width & 1
-  }
-
   undoman = new UndoMan(this)
   tool?: Tool
   op = new Op(this)
+  abort = new AbortController()
 
   #tex_tile?: PIXI.Texture
+
+  theme = $derived({
+    bg: this.dark ? 0x000000 : 0xFFFFFF,
+    fg: this.dark ? 0xFFFFFF : 0x000000,
+    bord: this.dark ? 0x171717 : 0xD4D4D4,
+    origin: this.dark ? 0xFFFFFF : 0x000000,
+  })
+
+  handlers = $derived.by(() => {
+    const handlers: Record<Mode, Handlers> = {
+      pen: {
+        down(tool, x, y) { tool.pen(x, y, true) },
+        move(tool, x, y) { tool.pen(x, y) },
+      },
+      line: {
+        down(tool, x, y) { tool.line(x, y, true) },
+        move(tool, x, y) { tool.line(x, y) },
+        up(tool, x, y) { tool.line(x, y, false, true) },
+      },
+    }
+    return handlers[this.mode]
+  })
 
   constructor(st: State) {
     this.st = st
     this.font = this.st.font
     this.glyph = this.font.get(this.st.code)
+
+    dmode.subscribe(x => this.dark = x === 'dark')
+
+    $effect(() => {
+      if (!this.on)
+        return
+      used(this.dark)
+      this.gen(false)
+    })
   }
 
   async init(node: HTMLElement) {
     await this.app.init({
       antialias: false,
-      background: 0xDDDDDD,
+      background: this.theme.bord,
     })
 
     node.appendChild(this.app.canvas)
@@ -96,8 +128,10 @@ export default class Man {
       this.tool = void 0
     }
 
-    this.app.renderer.on('resize', this.resize)
-    addEventListener('resize', this.resize)
+    this.app.renderer.on('resize', () => this.resize())
+    addEventListener('resize', () => this.resize(), {
+      signal: this.abort.signal,
+    })
 
     this.grid
       .on('pointerdown', ({ screen: { x, y } }) => {
@@ -118,25 +152,9 @@ export default class Man {
       .on('pointerupoutside', up)
   }
 
-  get handlers() {
-    const handlers: Record<Mode, Handlers> = {
-      pen: {
-        down(tool, x, y) { tool.pen(x, y, true) },
-        move(tool, x, y) { tool.pen(x, y) },
-      },
-      line: {
-        down(tool, x, y) { tool.line(x, y, true) },
-        move(tool, x, y) { tool.line(x, y) },
-        up(tool, x, y) { tool.line(x, y, false, true) },
-      },
-    }
-
-    return handlers[this.mode]
-  }
-
   unlisten() {
     this.app.renderer.off('resize')
-    removeEventListener('resize', this.resize)
+    this.abort.abort()
     this.grid
       .off('pointerdown')
       .off('pointerup')
@@ -144,10 +162,15 @@ export default class Man {
       .off('pointermove')
   }
 
-  gen() {
-    this.grid.removeChildren()
+  gen(hard = true) {
     this.lines.removeChildren()
-    this.tiles = []
+    if (hard) {
+      this.grid.removeChildren()
+      this.tiles = []
+    }
+    else {
+      this.retint()
+    }
 
     this.glyph.resize(this.st.w, this.st.w)
     const [bly] = this.glyph.cornerBL
@@ -180,7 +203,7 @@ export default class Man {
     }
 
     const htints = new Map([
-      [oy, 0x000000],
+      [oy, this.theme.origin],
       [oy - this.font.metrics.asc, 0xFF0000],
       [oy - this.font.metrics.cap, 0xFFAA00],
       [oy - this.font.metrics.x, 0xFFAA00],
@@ -188,15 +211,18 @@ export default class Man {
     ])
 
     const vtints = new Map([
-      [ox, 0x000000],
+      [ox, this.theme.origin],
       [ox + this.glyph.width, 0x00CC00],
     ])
 
     for (let y = 0; y < this.st.w; y++) {
       const yw = y * this.pw
 
-      hline(yw, 0xDDDDDD)
-      vline(yw, 0xDDDDDD)
+      hline(yw, this.theme.bord)
+      vline(yw, this.theme.bord)
+
+      if (!hard)
+        continue
 
       for (let x = 0; x < this.st.w; x++) {
         const xw = x * this.pw
@@ -206,7 +232,7 @@ export default class Man {
           scale: this.pw,
           x: xw,
           y: yw,
-          tint: +!this.glyph.mat.get(y, x) * 0xFFFFFF,
+          tint: this.cellColor(y, x),
         })
 
         this.grid.addChild(tile)
@@ -218,6 +244,7 @@ export default class Man {
     for (const [k, v] of htints.entries()) hline(k * this.pw, v)
 
     this.app.renderer.resize(this.grid.width + this.bw, this.grid.height + this.bw)
+    this.app.renderer.background.color = this.theme.bord
   }
 
   retint() {
@@ -225,7 +252,15 @@ export default class Man {
       const i = +i_
       const x = i % this.st.w
       const y = i / this.st.w | 0
-      this.tiles[i].tint = +!this.glyph.mat.get(y, x) * 0xFFFFFF
+      this.tiles[i].tint = this.cellColor(y, x)
     }
+  }
+
+  cellColor(y: number, x: number) {
+    return this.glyph.mat.get(y, x) ? this.theme.fg : this.theme.bg
+  }
+
+  resize() {
+    this.odd = this.app.renderer.width & 1
   }
 }

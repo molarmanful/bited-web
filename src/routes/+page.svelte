@@ -4,6 +4,7 @@
   import { Grid, Table } from '$lib/components'
   import { cState } from '$lib/contexts'
   import State from '$lib/State.svelte'
+  import { toggleMode } from 'mode-watcher'
 
   let cw = $state(0)
 
@@ -30,6 +31,8 @@
 </svelte:head>
 
 <div class='mx-auto container' bind:clientWidth={cw}>
+  <button onclick={toggleMode}>TOGGLE</button>
+
   {#if st.uc.ready}
     {#if st.code >= 0}
       <Grid />

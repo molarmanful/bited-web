@@ -21,7 +21,15 @@ export default {
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   safelist: [],
-  theme: {},
+  theme: {
+    colors: {
+      fg: 'var(--c-fg)',
+      bg: 'var(--c-bg)',
+      bord: 'var(--c-bord)',
+      dis: 'var(--c-dis)',
+      sel: 'var(--c-sel)',
+    },
+  },
   rules: [],
   shortcuts: [],
   extractors: [extractorSvelte],

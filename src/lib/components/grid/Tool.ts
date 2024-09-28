@@ -27,7 +27,6 @@ export default class Tool {
       t = v
     }
     else if (down) {
-      // TODO: change to account for dark mode
       t = this.#color = !!this.man.tiles[y0 * this.st.w + x0].tint
       this.ptr = [x0, y0]
     }
@@ -37,7 +36,7 @@ export default class Tool {
 
     for (const [x, y] of this.interp(x0, y0)) {
       this.man.tiles[y * this.st.w + x].tint = +!t * 0xFFFFFF
-      this.man.glyph.mat.set(y, x, t)
+      this.man.glyph.mat.set(y, x, t !== this.man.dark)
     }
 
     this.ptr = [x0, y0]

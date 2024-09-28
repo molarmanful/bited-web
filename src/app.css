@@ -1,5 +1,23 @@
 :root {
-  @apply font-sans1;
+  @apply font-sans1 bg-bg;
+
+  --c-fg: #000;
+  --c-bg: #fff;
+  --c-bord: #000;
+  --c-dis: #cbd5e1;
+  --c-sel: #3b82f6;
+}
+
+.dark {
+  --c-fg: #fff;
+  --c-bg: #000;
+  --c-bord: #171717;
+  --c-dis: #0a0a0a;
+  --c-sel: #1e40af;
+}
+
+body {
+  @apply text-fg bg-bg;
 }
 
 canvas {
