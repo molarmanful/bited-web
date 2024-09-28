@@ -22,10 +22,7 @@ export default class Glyph {
     this.mat.translate(oy1 - oy0, ox1 - ox0)
   }
 
-  img(f = () => { }) {
-    const [h, w] = this.mat.size
-    if (h <= 0 || w <= 0)
-      return
+  img(h: number, w: number, f = () => { }) {
     const cv = document.createElement('canvas')
     cv.height = h
     cv.width = w

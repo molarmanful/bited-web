@@ -15,7 +15,7 @@ export default class UndoMan {
     $effect(() => {
       used(this.undos, this.redos)
       this.man.font.set(this.man.glyph)
-      this.man.glyph.img()
+      this.man.glyph.img(this.man.st.w, this.man.st.w)
     })
   }
 
