@@ -53,7 +53,6 @@
 
   {#if st.meta}
     <div class='font-mono'>
-      {String.fromCodePoint(st.code)}:&nbsp;
       U+{st.code.toString(16).padStart(4, '0')}&nbsp;
       {st.meta.category}&nbsp;
       {st.meta.name}

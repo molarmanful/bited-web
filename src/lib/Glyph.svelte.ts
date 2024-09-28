@@ -43,6 +43,8 @@ export default class Glyph {
 
     this.resize(h0, w0)
     ctx.putImageData(imageData, 0, 0)
+
+    this.blob = null
     cv.toBlob((blob) => {
       this.blob = blob
       f()
