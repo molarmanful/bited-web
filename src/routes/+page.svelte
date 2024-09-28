@@ -26,7 +26,7 @@
 </script>
 
 <svelte:head>
-  <title>bited | Bitmap Font Editor</title>
+  <title>bited | Bitmap Font Designer</title>
 </svelte:head>
 
 <div class='mx-auto container' bind:clientWidth={cw}>

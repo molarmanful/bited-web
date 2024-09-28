@@ -2,6 +2,8 @@ import type SBM from '$lib/SBM'
 
 import type Man from './Man.svelte'
 
+import { used } from '$lib/util'
+
 export default class UndoMan {
   undos = $state<UndoItem[]>([])
   redos = $state<UndoItem[]>([])
@@ -11,9 +13,8 @@ export default class UndoMan {
     this.man = man
 
     $effect(() => {
-      if ([this.undos, this.redos]) {
-        this.man.font.set(this.man.glyph)
-      }
+      used(this.undos, this.redos)
+      this.man.font.set(this.man.glyph)
     })
   }
 

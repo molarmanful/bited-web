@@ -12,12 +12,11 @@
 
   const man = new Man(st)
 
-  let scale = $state(man.scale)
+  let scale = $state(st.scale)
   let pw = $state(man.pw)
 
   const render: Action = (node) => {
     man.init(node)
-
     return { destroy: () => man.destroy() }
   }
 </script>
@@ -27,12 +26,12 @@
 <div class='h-screen flex flex-col items-center'>
   <div>
     <form onsubmit={() => {
-      man.scale = scale
+      st.scale = scale
       man.pw = pw
       man.gen()
     }}>
-      <input min={(man.font.size + 15) >> 3} type='number' bind:value={scale} />
-      <input min='4' step='4' type='number' bind:value={pw} />
+      <input min={(man.font.size + 15) >> 3} required type='number' bind:value={scale} />
+      <input min='4' required step='4' type='number' bind:value={pw} />
       <button type='submit'>UPDATE</button>
     </form>
 

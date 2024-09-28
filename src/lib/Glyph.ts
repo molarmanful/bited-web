@@ -14,6 +14,13 @@ export default class Glyph {
     this.width = this.font.metrics.width
   }
 
+  resize(h: number, w: number) {
+    const [oy0, ox0] = this.origin
+    this.mat.resize(h, w)
+    const [oy1, ox1] = this.origin
+    this.mat.translate(oy1 - oy0, ox1 - ox0)
+  }
+
   get center(): [number, number] { // y, x
     return [this.font.size / 2 | 0, this.width / 2 | 0]
   }

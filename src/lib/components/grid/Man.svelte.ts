@@ -22,9 +22,6 @@ export default class Man {
   glyph: Glyph
 
   on = false
-  // TODO: scale based on glyph bounds
-  scale = $state(4)
-  w = $derived(8 * this.scale)
   pw = $state(12)
   odd = $state(0)
   bw = 1
@@ -152,14 +149,11 @@ export default class Man {
     this.lines.removeChildren()
     this.tiles = []
 
-    const [oy0, ox0] = this.glyph.origin
-    this.glyph.mat.resize(this.w, this.w)
-
+    this.glyph.resize(this.st.w, this.st.w)
     const [bly] = this.glyph.cornerBL
     const [oy, ox] = this.glyph.origin
-    this.glyph.mat.translate(oy - oy0, ox - ox0)
 
-    const ww = this.w * this.pw
+    const ww = this.st.w * this.pw
 
     const hline = (y: number, tint: number, b = 0) => {
       this.lines.addChild(
@@ -198,13 +192,13 @@ export default class Man {
       [ox + this.glyph.width, 0x00CC00],
     ])
 
-    for (let y = 0; y < this.w; y++) {
+    for (let y = 0; y < this.st.w; y++) {
       const yw = y * this.pw
 
       hline(yw, 0xDDDDDD)
       vline(yw, 0xDDDDDD)
 
-      for (let x = 0; x < this.w; x++) {
+      for (let x = 0; x < this.st.w; x++) {
         const xw = x * this.pw
 
         const tile = new PIXI.Sprite({
@@ -229,8 +223,8 @@ export default class Man {
   retint() {
     for (const i_ in this.tiles) {
       const i = +i_
-      const x = i % this.w
-      const y = i / this.w | 0
+      const x = i % this.st.w
+      const y = i / this.st.w | 0
       this.tiles[i].tint = +!this.glyph.mat.get(y, x) * 0xFFFFFF
     }
   }

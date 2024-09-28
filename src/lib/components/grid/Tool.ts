@@ -1,8 +1,11 @@
+import type State from '$lib/State.svelte'
+
 import type Man from './Man.svelte'
 
 import { UDiff } from './UndoMan.svelte'
 
 export default class Tool {
+  st: State
   man: Man
   prev: Set<string>
   ptr: [number, number] = [0, 0]
@@ -11,6 +14,7 @@ export default class Tool {
 
   constructor(man: Man) {
     this.man = man
+    this.st = this.man.st
     this.prev = new Set(this.man.glyph.mat.ks)
   }
 
@@ -24,7 +28,7 @@ export default class Tool {
     }
     else if (down) {
       // TODO: change to account for dark mode
-      t = this.#color = !!this.man.tiles[y0 * this.man.w + x0].tint
+      t = this.#color = !!this.man.tiles[y0 * this.st.w + x0].tint
       this.ptr = [x0, y0]
     }
     else {
@@ -32,7 +36,7 @@ export default class Tool {
     }
 
     for (const [x, y] of this.interp(x0, y0)) {
-      this.man.tiles[y * this.man.w + x].tint = +!t * 0xFFFFFF
+      this.man.tiles[y * this.st.w + x].tint = +!t * 0xFFFFFF
       this.man.glyph.mat.set(y, x, t)
     }
 
@@ -50,7 +54,7 @@ export default class Tool {
     }
 
     for (const [x, y] of this.interp(x0, y0)) {
-      this.man.tiles[y * this.man.w + x].tint = 0
+      this.man.tiles[y * this.st.w + x].tint = 0
       if (up)
         this.man.glyph.mat.set(y, x, true)
     }

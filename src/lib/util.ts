@@ -1,5 +1,7 @@
 import type { Action } from 'svelte/action'
 
+export const used = (..._: any[]) => { }
+
 export const clickout: Action<HTMLElement, (e: MouseEvent) => void> = (node, f = (_: MouseEvent) => { }) => {
   const abort = new AbortController()
 

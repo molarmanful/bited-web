@@ -19,7 +19,6 @@
     dprd = $derived(this.dpr | 0)
     scale = $derived(this.dprd / this.dpr)
     fsz = $derived(16 * this.scale)
-    csz = $derived(32)
 
     constructor() {
       $effect(() => {
@@ -33,8 +32,8 @@
   class Virt {
     len = $derived(st.uc.view.length)
 
-    vh = $derived(px.fsz + 8 + px.scale + px.csz)
-    vw = $derived(px.csz)
+    vh = $derived(px.fsz + 8 + px.scale + st.w)
+    vw = $derived(st.w)
     gap = $derived(px.scale)
     gh = $derived(this.vh + this.gap)
     gw = $derived(this.vw + this.gap)
