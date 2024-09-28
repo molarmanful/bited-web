@@ -157,63 +157,70 @@
   bind:innerHeight
 />
 
-<div class='mx-auto my-8 w-fit'>
-  <select
-    onchange={() => sel.reset()}
-    bind:value={st.block}
-  >
-    <option value='all'>Unicode</option>
-    {#each st.uc.blocks as [name, [start, end]]}
-      <option value={name}>
-        {name}
-        ({start.toString(16).padStart(4, '0')}-{(end - 1).toString(16).padStart(4, '0')})
-      </option>
-    {/each}
-  </select>
+<select
+  onchange={() => sel.reset()}
+  bind:value={st.block}
+>
+  <option selected value=''>Font Glyphs</option>
+  <option value='all'>Unicode</option>
+  {#each st.uc.blocks as [name, [start, end]]}
+    <option value={name}>
+      {name}
+      ({start.toString(16).padStart(4, '0')}-{(end - 1).toString(16).padStart(4, '0')})
+    </option>
+  {/each}
+</select>
 
-  <div
-    style:height='{virt.h}px'
-    style:width='{virt.w}px'
-    class='relative skew-.0000000001 b-(1 bord) bg-bord'
-    use:clickout={() => sel.reset()}
-    use:virt.offTop
-  >
-    {#each virt.items as { x, y, k, v } (k)}
-      {@const glyph = st.font.get(k)}
+{#if st.uc.view.length > 0}
+  <div class='mx-auto my-8 w-fit'>
+    <div
+      style:height='{virt.h}px'
+      style:width='{virt.w}px'
+      class='relative skew-.0000000001 b-(1 bord) bg-bord'
+      use:clickout={() => sel.reset()}
+      use:virt.offTop
+    >
+      {#each virt.items as { x, y, k, v } (k)}
+        {@const glyph = st.font.get(k)}
 
-      <button
-        style:width='{virt.vw}px'
-        style:left='{x}px'
-        style:top='{y}px'
-        class='absolute flex flex-col items-center bg-bg'
-        onclick={() => sel.edit(k)}
-      >
-        <code style:height='{px.fsz}px' class='uni my-1'>
-          {String.fromCodePoint(k)}
-        </code>
-        <div class='h-0 w-full b-(t-1 bord)'></div>
-
-        <div
-          style:height='{virt.vw}px'
+        <button
           style:width='{virt.vw}px'
-          class="{sel.isSel(k)
-            ? 'bg-sel'
-            : glyph && glyph.blob
-            ? 'bg-bg'
-            : 'bg-dis'} "
+          style:left='{x}px'
+          style:top='{y}px'
+          class='absolute flex flex-col items-center bg-bg'
+          onclick={() => sel.edit(k)}
         >
-          {#if glyph && glyph.blob}
-            <img
-              style:height='{virt.vw}px'
-              style:width='{virt.vw}px'
-              class='text-transparent image-render-pixel dark:invert'
-              alt={v.name}
-              draggable='false'
-              src={URL.createObjectURL(glyph.blob)}
-            />
-          {/if}
-        </div>
-      </button>
-    {/each}
+          <code style:height='{px.fsz}px' class='uni my-1'>
+            {String.fromCodePoint(k)}
+          </code>
+          <div class='h-0 w-full b-(t-1 bord)'></div>
+
+          <div
+            style:height='{virt.vw}px'
+            style:width='{virt.vw}px'
+            class="{sel.isSel(k)
+              ? 'bg-sel'
+              : glyph && glyph.blob
+              ? 'bg-bg'
+              : 'bg-dis'} "
+          >
+            {#if glyph && glyph.blob}
+              <img
+                style:height='{virt.vw}px'
+                style:width='{virt.vw}px'
+                class='text-transparent image-render-pixel dark:invert'
+                alt={v.name}
+                draggable='false'
+                src={URL.createObjectURL(glyph.blob)}
+              />
+            {/if}
+          </div>
+        </button>
+      {/each}
+    </div>
   </div>
-</div>
+{:else}
+  <div class='h-screen flex items-center justify-center'>
+    NO GLYPHS... YET
+  </div>
+{/if}

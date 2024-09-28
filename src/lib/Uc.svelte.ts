@@ -30,8 +30,11 @@ export default class Uc {
       return res
     }
 
-    // TODO: glyph view default
-    return this.dataA
+    const defs: Data
+      = [...this.st.font.glyphs.keys()]
+        .sort((a, b) => a - b)
+        .map(i => [i, this.data.get(i)!])
+    return defs
   })
 
   constructor(st: State) {
