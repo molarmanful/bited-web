@@ -53,7 +53,7 @@ export default class Tool {
     }
 
     for (const [x, y] of this.interp(x0, y0)) {
-      this.man.tiles[y * this.st.w + x].tint = 0
+      this.man.tiles[y * this.st.w + x].tint = this.man.theme.fg
       if (up)
         this.man.glyph.mat.set(y, x, true)
     }

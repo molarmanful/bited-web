@@ -46,7 +46,12 @@ export default class Man {
     bg: this.dark ? 0x000000 : 0xFFFFFF,
     fg: this.dark ? 0xFFFFFF : 0x000000,
     bord: this.dark ? 0x171717 : 0xD4D4D4,
-    origin: this.dark ? 0xFFFFFF : 0x000000,
+    origin: this.dark ? 0x525252 : 0x000000,
+    asc: this.dark ? 0x831843 : 0xEC4899,
+    cap: this.dark ? 0x7F1D1D : 0xF97316,
+    x: this.dark ? 0x713F12 : 0xEAB308,
+    desc: this.dark ? 0x164E63 : 0x06B6D4,
+    w: this.dark ? 0x14532D : 0x22C55E,
   })
 
   handlers = $derived.by(() => {
@@ -205,16 +210,16 @@ export default class Man {
     // TODO: convert to dark mode
 
     const htints = new Map([
+      [oy - this.font.metrics.asc, this.theme.asc],
+      [oy - this.font.metrics.cap, this.theme.cap],
+      [oy - this.font.metrics.x, this.theme.x],
+      [bly, this.theme.desc],
       [oy, this.theme.origin],
-      [oy - this.font.metrics.asc, 0xFF0000],
-      [oy - this.font.metrics.cap, 0xFFAA00],
-      [oy - this.font.metrics.x, 0xFFAA00],
-      [bly, 0x00CCCC],
     ])
 
     const vtints = new Map([
+      [ox + this.glyph.width, this.theme.w],
       [ox, this.theme.origin],
-      [ox + this.glyph.width, 0x00CC00],
     ])
 
     for (let y = 0; y < this.st.w; y++) {
@@ -242,8 +247,8 @@ export default class Man {
       }
     }
 
-    for (const [k, v] of vtints.entries()) vline(k * this.pw, v)
     for (const [k, v] of htints.entries()) hline(k * this.pw, v)
+    for (const [k, v] of vtints.entries()) vline(k * this.pw, v)
 
     this.app.renderer.resize(this.grid.width + this.bw, this.grid.height + this.bw)
     this.app.renderer.background.color = this.theme.bord
