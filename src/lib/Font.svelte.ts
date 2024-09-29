@@ -1,7 +1,6 @@
 import type { Ser as GlyphSer } from '$lib/Glyph.svelte'
 
 import Glyph from '$lib/Glyph.svelte'
-import LF from 'localforage'
 import { SvelteMap } from 'svelte/reactivity'
 
 interface Metrics {
@@ -12,15 +11,14 @@ interface Metrics {
   width: number
 }
 
-interface Ser {
+export interface Ser {
   name: string
   metrics: Metrics
   glyphs: GlyphSer[]
 }
 
 export default class Font {
-  name = 'FONTNAME'
-  on = $state(false)
+  name = $state('FONTNAME')
   metrics = $state<Metrics>({
     cap: 9,
     x: 7,
@@ -44,18 +42,6 @@ export default class Font {
     }
   })
 
-  constructor() {
-    $effect.pre(() => {
-      this.restore()
-    })
-
-    $effect(() => {
-      if (!this.on)
-        return
-      this.capture()
-    })
-  }
-
   deser({ name, metrics, glyphs }: Ser) {
     this.name = name
     this.metrics = metrics
@@ -63,17 +49,6 @@ export default class Font {
     this.glyphs.clear()
     for (const v of glyphs.values())
       this.set(Glyph.deser(this, v))
-  }
-
-  async capture() {
-    await LF.setItem('bited-font', this.ser)
-  }
-
-  async restore() {
-    const res = await LF.getItem<Ser>('bited-font')
-    if (res)
-      this.deser(res)
-    this.on = true
   }
 
   useMetrics(metrics: Partial<Metrics>) {
