@@ -17,18 +17,18 @@ export default class Glyph {
   blob = $state<Blob | null>(null)
   mat = new SBM()
 
-  constructor(font: Font, code: number) {
-    this.font = font
-    this.code = code
-    this.width = this.font.metrics.width
-  }
-
   ser = $derived({
     code: this.code,
     width: this.width,
     blob: this.blob,
     mat: this.mat.ser,
   })
+
+  constructor(font: Font, code: number) {
+    this.font = font
+    this.code = code
+    this.width = this.font.metrics.width
+  }
 
   static deser(font: Font, { code, width, blob, mat }: Ser) {
     const g = new Glyph(font, code)

@@ -50,17 +50,20 @@ export default class State {
   }
 
   async capture() {
-    // const t0 = performance.now()
+    const t0 = performance.now()
     const ser = this.ser
-    // const t1 = performance.now()
-    // console.log('CAP', t1 - t0)
+    const t1 = performance.now()
+    console.log('CAP', t1 - t0)
     await LF.setItem('bited-font', ser)
   }
 
   async restore() {
+    const t0 = performance.now()
     const res = await LF.getItem<Ser>('bited-font')
     if (res)
       this.deser(res)
+    const t1 = performance.now()
+    console.log('RES', t1 - t0)
     this.#on = true
   }
 }

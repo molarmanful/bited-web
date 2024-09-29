@@ -1,5 +1,6 @@
 <script lang='ts'>
   import { cState } from '$lib/contexts'
+  import Glyph from '$lib/Glyph.svelte'
   import { clickout } from '$lib/util'
   import { SvelteSet } from 'svelte/reactivity'
 
@@ -171,6 +172,21 @@
   {/each}
 </select>
 
+<button onclick={() => {
+  const g = new Glyph(st.font, 0)
+  g.resize(st.w, st.w)
+  g.mat.not()
+  g.img(st.w, st.w, () => {
+    for (const code of st.uc.data.keys()) {
+      const g1 = new Glyph(st.font, code)
+      g1.mat = g.mat.clone()
+      g1.blob = g.blob
+      st.font.set(g1)
+    }
+    console.log('GEN TEST')
+  })
+}}>TEST</button>
+
 {#if st.uc.view.length > 0}
   <div class='mx-auto my-8 w-fit'>
     <div
@@ -187,7 +203,7 @@
           style:width='{virt.vw}px'
           style:left='{x}px'
           style:top='{y}px'
-          class='absolute flex flex-col items-center bg-bg'
+          class="{sel.isSel(k) ? 'bg-sel' : 'bg-bg'} absolute flex flex-col items-center"
           onclick={() => sel.edit(k)}
         >
           <code style:height='{px.fsz}px' class='uni my-1'>
