@@ -2,7 +2,7 @@ import DataLoader from '$lib/workers/dataloader?worker'
 
 export interface Res {
   blocks: Map<string, [number, number]>
-  codes: Set<number>
+  codes: number[]
 }
 
 export default () => new Promise<Res>((res) => {
@@ -10,7 +10,7 @@ export default () => new Promise<Res>((res) => {
   l.onmessage = ({ data: { blocks, codes } }) => {
     res({
       blocks: new Map(blocks),
-      codes: new Set(codes),
+      codes,
     })
   }
 })

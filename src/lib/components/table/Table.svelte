@@ -62,13 +62,10 @@
       let y = this.row0
 
       for (let i = this.i0; i < this.i1; i++) {
-        const [k, v] = st.uc.view[i]
-
         res.push({
           x: x * this.gw,
           y: y * this.gh,
-          k,
-          v,
+          k: st.uc.view[i],
         })
 
         x++
@@ -177,7 +174,7 @@
   g.resize(st.w, st.w)
   g.mat.not()
   g.img(st.w, st.w, () => {
-    for (const code of st.uc.data.keys()) {
+    for (const code of st.uc.codes) {
       const g1 = new Glyph(st.font, code)
       g1.mat = g.mat.clone()
       g1.blob = g.blob
@@ -196,7 +193,7 @@
       use:clickout={() => sel.reset()}
       use:virt.offTop
     >
-      {#each virt.items as { x, y, k, v } (k)}
+      {#each virt.items as { x, y, k } (k)}
         {@const glyph = st.font.get(k)}
 
         <button
@@ -225,7 +222,7 @@
                 style:height='{virt.vw}px'
                 style:width='{virt.vw}px'
                 class='text-transparent image-render-pixel dark:invert'
-                alt={v.name}
+                alt='Bitmap glyph at Unicode codepoint {k}'
                 draggable='false'
                 src={URL.createObjectURL(glyph.blob)}
               />

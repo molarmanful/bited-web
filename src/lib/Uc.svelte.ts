@@ -7,7 +7,8 @@ export default class Uc {
   ready = $state(false)
 
   blocks = $state.raw<Res['blocks']>(new Map())
-  codes = $state.raw<Res['codes']>(new Set())
+  codes = $state.raw<Res['codes']>([])
+  codesS = $state.raw<Set<number>>(new Set())
 
   view = $derived.by(() => {
     if (this.st.block === 'all') {
@@ -18,16 +19,16 @@ export default class Uc {
     if (block) {
       const [i0, i1] = block
 
-      const res: Res['codes'] = new Set()
+      const res: Res['codes'] = []
       for (let i = i0; i <= i1; i++) {
-        if (this.codes.has(i))
-          res.add(i)
+        if (this.codesS.has(i))
+          res.push(i)
       }
 
       return res
     }
 
-    return new Set([...this.st.font.glyphs.keys()].sort((a, b) => a - b))
+    return [...this.st.font.glyphs.keys()].sort((a, b) => a - b)
   })
 
   constructor(st: State) {
@@ -38,6 +39,7 @@ export default class Uc {
         const { blocks, codes } = await UC()
         this.blocks = blocks
         this.codes = codes
+        this.codesS = new Set(codes)
         this.ready = true
       })()
     })
