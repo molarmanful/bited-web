@@ -8,7 +8,7 @@ export default class Uc {
 
   blocks = $state.raw<Res['blocks']>(new Map())
   codes = $state.raw<Res['codes']>([])
-  codesS = $state.raw<Set<number>>(new Set())
+  codesS = $derived(new Set(this.codes))
 
   view = $derived.by(() => {
     if (this.st.block === 'all') {
@@ -39,7 +39,6 @@ export default class Uc {
         const { blocks, codes } = await UC()
         this.blocks = blocks
         this.codes = codes
-        this.codesS = new Set(codes)
         this.ready = true
       })()
     })
