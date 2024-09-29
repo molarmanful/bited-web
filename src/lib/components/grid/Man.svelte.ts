@@ -1,10 +1,10 @@
 import type Font from '$lib/Font.svelte'
-import type Glyph from '$lib/Glyph.svelte'
 import type State from '$lib/State.svelte'
 
 import { used } from '$lib/util'
 import { mode as dmode } from 'mode-watcher'
 import * as PIXI from 'pixi.js'
+import { fromStore } from 'svelte/store'
 
 import Op from './Op'
 import Tool from './Tool'
@@ -21,7 +21,6 @@ interface Handlers {
 export default class Man {
   st: State
   font: Font
-  glyph: Glyph
 
   on = $state(false)
   pw = $state(12)
@@ -29,7 +28,8 @@ export default class Man {
   bw = 1
   mode = $state<Mode>('pen')
 
-  dark = $state(false)
+  dmode = fromStore(dmode)
+  dark = $derived(this.dmode.current === 'dark')
 
   app = new PIXI.Application()
   grid = new PIXI.Container()
@@ -72,9 +72,6 @@ export default class Man {
   constructor(st: State) {
     this.st = st
     this.font = this.st.font
-    this.glyph = this.font.getF(this.st.code)
-
-    dmode.subscribe(x => this.dark = x === 'dark')
 
     $effect(() => {
       if (!this.on)
