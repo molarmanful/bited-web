@@ -1,52 +1,45 @@
 import type State from '$lib/State.svelte'
 
-import UC, { type Blocks, type Data } from '$lib/Unicode'
+import UC, { type Res } from '$lib/Unicode'
 
 export default class Uc {
   st: State
   ready = $state(false)
 
-  dataA = $state.raw<Data>([])
-  data = $derived(new Map(this.dataA))
-
-  blocks = $state.raw<Blocks>(new Map())
+  blocks = $state.raw<Res['blocks']>(new Map())
+  codes = $state.raw<Res['codes']>(new Set())
 
   view = $derived.by(() => {
     if (this.st.block === 'all') {
-      return this.dataA
+      return this.codes
     }
 
     const block = this.blocks.get(this.st.block)
     if (block) {
       const [i0, i1] = block
 
-      const res: Data = []
+      const res: Res['codes'] = new Set()
       for (let i = i0; i <= i1; i++) {
-        const c = this.data.get(i)
-        if (c)
-          res.push([i, c])
+        if (this.codes.has(i))
+          res.add(i)
       }
 
       return res
     }
 
-    const defs: Data
-      = [...this.st.font.glyphs.keys()]
-        .sort((a, b) => a - b)
-        .map(i => [i, this.data.get(i)!])
-    return defs
+    return new Set([...this.st.font.glyphs.keys()].sort((a, b) => a - b))
   })
 
   constructor(st: State) {
     this.st = st
 
     $effect(() => {
-      Promise.all([
-        UC.data().then(res => this.dataA = res),
-        UC.blocks().then(res => this.blocks = res),
-      ]).then(() => {
+      (async () => {
+        const { blocks, codes } = await UC()
+        this.blocks = blocks
+        this.codes = codes
         this.ready = true
-      })
+      })()
     })
   }
 }

@@ -1,14 +1,7 @@
+import type { GlyphSer as Ser } from '$lib/db'
 import type Font from '$lib/Font.svelte'
-import type { Ser as SBMSer } from '$lib/SBM'
 
 import SBM from '$lib/SBM'
-
-export interface Ser {
-  code: number
-  width: number
-  blob: Blob | null
-  mat: SBMSer
-}
 
 export default class Glyph {
   font: Font

@@ -183,7 +183,7 @@
       g1.blob = g.blob
       st.font.set(g1)
     }
-    console.log('GEN TEST')
+    console.log('STRESSED')
   })
 }}>TEST</button>
 

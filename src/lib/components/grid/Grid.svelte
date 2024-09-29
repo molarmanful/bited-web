@@ -51,6 +51,7 @@
     <button onclick={() => man.mode = 'line'}>LINE</button>
   </div>
 
+  <!-- FIXME
   {#if st.meta}
     <div class='font-mono'>
       U+{st.code.toString(16).padStart(4, '0')}&nbsp;
@@ -58,6 +59,7 @@
       {st.meta.name}
     </div>
   {/if}
+   -->
 
   <div
     style:padding-top='{man.odd}px'

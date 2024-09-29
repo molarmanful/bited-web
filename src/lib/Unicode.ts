@@ -1,27 +1,16 @@
-import blocksURL from '$lib/uc/blocks.json?url'
-import dataURL from '$lib/uc/data.json?url'
 import DataLoader from '$lib/workers/dataloader?worker'
 
-interface Char {
-  name: string
-  category: string
-  mirrored: boolean
+export interface Res {
+  blocks: Map<string, [number, number]>
+  codes: Set<number>
 }
 
-export type Data = [number, Char][]
-export type Blocks = Map<string, [number, number]>
-
-const load = <T>(
-  name: string,
-  url: string,
-  f = (x: any) => x as T,
-) => () => new Promise<T>((res) => {
+export default () => new Promise<Res>((res) => {
   const l = new DataLoader()
-  l.postMessage({ name, url })
-  l.onmessage = ({ data }) => res(f(data))
+  l.onmessage = ({ data: { blocks, codes } }) => {
+    res({
+      blocks: new Map(blocks),
+      codes: new Set(codes),
+    })
+  }
 })
-
-export default {
-  data: load<Data>('uc_data', dataURL),
-  blocks: load<Blocks>('uc_blocks', blocksURL, x => new Map(x)),
-}

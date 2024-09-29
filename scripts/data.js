@@ -15,12 +15,12 @@ const getData = async () => {
     const [code, name, category, canon, bi, decomp, dec, digit, num, mirrored, name1, upper, lower, title]
       = line.split(';')
 
-    a.push([+`0x${code}`, {
-      // name: name.startsWith('<') ? name1 : name,
+    a.push({
+      code: +`0x${code}`,
       name: name.startsWith('<') && name1 ? name1 : name,
       category,
       mirrored: mirrored === 'Y',
-    }])
+    })
   }
 
   await writeFile('src/lib/uc/data.json', JSON.stringify(a))
