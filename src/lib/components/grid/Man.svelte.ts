@@ -72,7 +72,7 @@ export default class Man {
   constructor(st: State) {
     this.st = st
     this.font = this.st.font
-    this.glyph = this.font.get(this.st.code)
+    this.glyph = this.font.getF(this.st.code)
 
     dmode.subscribe(x => this.dark = x === 'dark')
 

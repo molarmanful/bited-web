@@ -1,7 +1,8 @@
 <script lang='ts'>
   import { cState } from '$lib/contexts'
   import Glyph from '$lib/Glyph.svelte'
-  import { clickout } from '$lib/util'
+  import { Range } from '$lib/Uc.svelte'
+  import { clickout, hex } from '$lib/util'
   import { SvelteSet } from 'svelte/reactivity'
 
   interface Props {
@@ -47,8 +48,7 @@
 
     rowD = $derived(Math.ceil(innerHeight / this.gh))
     rowS = $derived(Math.ceil(this.rowD))
-    top = $state(0)
-    rowT = $derived((scrollY + this.top) / this.gh | 0)
+    rowT = $derived(scrollY / this.gh | 0)
     rowB = $derived(this.rowT + this.rowD)
     row0 = $derived(Math.max(0, this.rowT - this.rowS))
     row1 = $derived(Math.min(this.len, this.rowB + this.rowS))
@@ -62,10 +62,14 @@
       let y = this.row0
 
       for (let i = this.i0; i < this.i1; i++) {
+        const k
+          = st.uc.view instanceof Range ? st.uc.view.get(i) : st.uc.view[i]
+
         res.push({
           x: x * this.gw,
           y: y * this.gh,
-          k: st.uc.view[i],
+          k,
+          c: String.fromCodePoint(k),
         })
 
         x++
@@ -77,10 +81,6 @@
 
       return res
     })
-
-    offTop(node: HTMLElement) {
-      this.top = node.offsetTop
-    }
   }
 
   const virt = new Virt()
@@ -160,11 +160,10 @@
   bind:value={st.block}
 >
   <option selected value=''>Font Glyphs</option>
-  <option value='all'>Unicode</option>
-  {#each st.uc.blocks as [name, [start, end]]}
+  {#each st.uc.blocks as [name, { i0, i1 }]}
     <option value={name}>
       {name}
-      ({start.toString(16).padStart(4, '0')}-{(end - 1).toString(16).padStart(4, '0')})
+      ({hex(i0)}-{hex(i1 - 1)})
     </option>
   {/each}
 </select>
@@ -174,7 +173,7 @@
   g.resize(st.w, st.w)
   g.mat.not()
   g.img(st.w, st.w, () => {
-    for (const code of st.uc.codes) {
+    for (const code of st.uc.view) {
       const g1 = new Glyph(st.font, code)
       g1.mat = g.mat.clone()
       g1.blob = g.blob
@@ -191,11 +190,9 @@
       style:width='{virt.w}px'
       class='relative skew-.0000000001 b-(1 bord) bg-bord'
       use:clickout={() => sel.reset()}
-      use:virt.offTop
     >
-      {#each virt.items as { x, y, k } (k)}
+      {#each virt.items as { x, y, k, c } (k)}
         {@const glyph = st.font.get(k)}
-
         <button
           style:width='{virt.vw}px'
           style:left='{x}px'
@@ -204,7 +201,7 @@
           onclick={() => sel.edit(k)}
         >
           <code style:height='{px.fsz}px' class='uni my-1'>
-            {String.fromCodePoint(k)}
+            {c}
           </code>
           <div class='h-0 w-full b-(t-1 bord)'></div>
 

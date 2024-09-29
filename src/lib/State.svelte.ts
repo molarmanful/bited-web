@@ -11,7 +11,6 @@ export default class State {
   uc = new Uc(this)
 
   block = $state('')
-
   code = $state(-1)
 
   vscale = $state(3)

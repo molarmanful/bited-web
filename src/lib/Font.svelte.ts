@@ -46,6 +46,10 @@ export default class Font {
   }
 
   get(code: number) {
+    return this.glyphs.get(code)
+  }
+
+  getF(code: number) {
     return this.glyphs.get(code) ?? new Glyph(this, code)
   }
 
