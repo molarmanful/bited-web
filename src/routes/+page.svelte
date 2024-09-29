@@ -33,7 +33,7 @@
 <div class='mx-auto container' bind:clientWidth={cw}>
   <button onclick={toggleMode}>TOGGLE</button>
 
-  {#if st.uc.ready}
+  {#if st.ready && st.uc.ready}
     {#if st.code >= 0}
       <Grid />
     {:else}
@@ -41,7 +41,11 @@
     {/if}
   {:else}
     <div class='h-screen flex items-center justify-center'>
-      loading...
+      loading{#if !st.ready}
+        &nbsp;saved state
+      {:else if !st.uc.ready}
+        &nbsp;unicode data
+      {/if}...
     </div>
   {/if}
 </div>

@@ -1,16 +1,12 @@
-import type { Ser as FontSer } from '$lib/Font.svelte'
+import type { StateSer as Ser } from '$lib/db'
 
 import Font from '$lib/Font.svelte'
 import Uc from '$lib/Uc.svelte'
-
-export interface Ser {
-  font: FontSer
-  vscale: number
-  scale: number
-}
+import Capture from '$lib/workers/statecapture?worker'
+import Restore from '$lib/workers/staterestore?worker'
 
 export default class State {
-  #on = $state(false)
+  ready = $state(false)
   font = new Font()
   uc = new Uc(this)
 
@@ -29,19 +25,32 @@ export default class State {
     scale: this.scale,
   })
 
-  deser({ font, vscale, scale }: Ser) {
-    this.vscale = vscale
-    this.scale = scale
-    this.font.deser(font)
+  constructor() {
+    $effect.pre(() => {
+      this.restore()
+    })
   }
 
-  async capture() {
-    const ser = this.ser
-    await LF.setItem('bited-font', ser)
+  deser({ font, vscale, scale }: Ser) {
+    if (vscale)
+      this.vscale = vscale
+    if (scale)
+      this.scale = scale
+    if (font)
+      this.font.deser(font)
+  }
+
+  capture() {
+    const C = new Capture()
+    C.postMessage(this.ser)
   }
 
   async restore() {
     await navigator?.storage?.persist?.()
-    this.#on = true
+    const R = new Restore()
+    R.onmessage = ({ data }) => {
+      this.deser(data)
+      this.ready = true
+    }
   }
 }

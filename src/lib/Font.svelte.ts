@@ -1,20 +1,14 @@
-import type { Ser as GlyphSer } from '$lib/Glyph.svelte'
+import type { FontSer as Ser } from '$lib/db'
 
 import Glyph from '$lib/Glyph.svelte'
 import { SvelteMap } from 'svelte/reactivity'
 
-interface Metrics {
+export interface Metrics {
   cap: number
   x: number
   asc: number
   desc: number
   width: number
-}
-
-export interface Ser {
-  name: string
-  metrics: Metrics
-  glyphs: GlyphSer[]
 }
 
 export default class Font {
@@ -30,25 +24,15 @@ export default class Font {
   size = $derived(this.metrics.asc + this.metrics.desc)
   glyphs = new SvelteMap<number, Glyph>()
 
-  ser = $derived.by<Ser>(() => {
-    const gs: GlyphSer[] = []
-    for (const v of this.glyphs.values())
-      gs.push(v.ser)
-
-    return {
-      name: this.name,
-      metrics: $state.snapshot(this.metrics),
-      glyphs: gs,
-    }
+  ser = $derived<Ser>({
+    name: this.name,
+    metrics: $state.snapshot(this.metrics),
   })
 
-  deser({ name, metrics, glyphs }: Ser) {
+  // TODO: load glyphs from db
+  deser({ name, metrics }: Ser) {
     this.name = name
     this.metrics = metrics
-
-    this.glyphs.clear()
-    for (const v of glyphs.values())
-      this.set(Glyph.deser(this, v))
   }
 
   useMetrics(metrics: Partial<Metrics>) {

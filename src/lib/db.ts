@@ -1,4 +1,4 @@
-import type { Ser as SBMSer } from '$lib/SBM'
+import type { Metrics } from '$lib/Font.svelte'
 
 import Dexie, { type EntityTable } from 'dexie'
 
@@ -14,11 +14,27 @@ export interface Char {
   mirrored: boolean
 }
 
+export interface StateSer {
+  font: FontSer
+  vscale: number
+  scale: number
+}
+
+export interface FontSer {
+  name: string
+  metrics: Metrics
+}
+
 export interface GlyphSer {
   code: number
   width: number
   blob: Blob | null
   mat: SBMSer
+}
+
+export interface SBMSer {
+  ks: Set<string>
+  size: [number, number]
 }
 
 export const db = new Dexie('bited') as Dexie & {

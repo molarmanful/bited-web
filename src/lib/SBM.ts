@@ -1,11 +1,8 @@
 // TODO: consider inversion to preserve sparseness
 
-type KsLike = SBM | Set<string>
+import type { SBMSer as Ser } from '$lib/db'
 
-export interface Ser {
-  ks: Set<string>
-  size: [number, number]
-}
+type KsLike = SBM | Set<string>
 
 export default class SBM {
   ks = new Set<string>()
