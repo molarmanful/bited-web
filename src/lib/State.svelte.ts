@@ -1,7 +1,7 @@
-import type { StateSer as Ser } from '$lib/db'
-
+import { db, type StateSer as Ser } from '$lib/db'
 import Font from '$lib/Font.svelte'
 import Uc from '$lib/Uc.svelte'
+import { liveQ } from '$lib/util'
 import Capture from '$lib/workers/statecapture?worker'
 import Restore from '$lib/workers/staterestore?worker'
 
@@ -24,6 +24,19 @@ export default class State {
     scale: this.scale,
   })
 
+  #glyphq = liveQ(() =>
+    db.transaction('r', db.glyphs, async () => {
+      const [glyphs, glyph] = await Promise.all([
+        db.glyphs.toArray(),
+        db.glyphs.get(this.code),
+      ])
+      return { glyphs, glyph }
+    }),
+  )
+
+  glyphq = $derived(this.#glyphq.current)
+  glyphs = $derived(new Map(this.glyphq.glyphs.map(g => [g.code, g])))
+
   constructor() {
     $effect.pre(() => {
       this.restore()
@@ -45,6 +58,7 @@ export default class State {
   }
 
   async restore() {
+    // TODO: verify that this works
     await navigator?.storage?.persist?.()
     const R = new Restore()
     R.onmessage = ({ data }) => {

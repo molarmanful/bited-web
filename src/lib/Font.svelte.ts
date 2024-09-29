@@ -1,8 +1,5 @@
 import type { FontSer as Ser } from '$lib/db'
 
-import Glyph from '$lib/Glyph.svelte'
-import { SvelteMap } from 'svelte/reactivity'
-
 export interface Metrics {
   cap: number
   x: number
@@ -22,7 +19,6 @@ export default class Font {
   })
 
   size = $derived(this.metrics.asc + this.metrics.desc)
-  glyphs = new SvelteMap<number, Glyph>()
 
   ser = $derived<Ser>({
     name: this.name,
@@ -43,25 +39,5 @@ export default class Font {
     this.metrics.asc = Math.max(0, this.metrics.asc | 0)
     this.metrics.desc = Math.max(0, this.metrics.desc | 0)
     this.metrics.width = Math.max(0, this.metrics.width | 0)
-  }
-
-  get(code: number) {
-    return this.glyphs.get(code)
-  }
-
-  getF(code: number) {
-    return this.glyphs.get(code) ?? new Glyph(this, code)
-  }
-
-  set(glyph: Glyph) {
-    this.glyphs.set(glyph.code, glyph)
-  }
-
-  has(code: number) {
-    return this.glyphs.has(code)
-  }
-
-  delete(code: number) {
-    this.glyphs.delete(code)
   }
 }

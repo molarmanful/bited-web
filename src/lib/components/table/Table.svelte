@@ -32,7 +32,11 @@
   const px = new Px()
 
   class Virt {
-    len = $derived(st.uc.view.length)
+    view = $derived(st.uc.blocks.get(st.block)
+      ?? [...st.glyphs.keys()].sort((a, b) => a - b),
+    )
+
+    len = $derived(this.view.length)
 
     vs = $state(2)
     vw = $derived(st.vw * this.vs * px.scale)
@@ -63,7 +67,7 @@
 
       for (let i = this.i0; i < this.i1; i++) {
         const k
-          = st.uc.view instanceof Range ? st.uc.view.get(i) : st.uc.view[i]
+          = this.view instanceof Range ? this.view.get(i) : this.view[i]
 
         res.push({
           x: x * this.gw,
@@ -173,7 +177,7 @@
   g.resize(st.w, st.w)
   g.mat.not()
   g.img(st.w, st.w, () => {
-    for (const code of st.uc.view) {
+    for (const code of virt.view) {
       const g1 = new Glyph(st.font, code)
       g1.mat = g.mat.clone()
       g1.blob = g.blob
@@ -183,7 +187,7 @@
   })
 }}>TEST</button>
 
-{#if st.uc.view.length > 0}
+{#if virt.view.length > 0}
   <div class='mx-auto my-8 w-fit'>
     <div
       style:height='{virt.h}px'
@@ -192,7 +196,8 @@
       use:clickout={() => sel.reset()}
     >
       {#each virt.items as { x, y, k, c } (k)}
-        {@const glyph = st.font.get(k)}
+        <!-- FIXME -->
+        {@const glyph = void 0}
         <button
           style:width='{virt.vw}px'
           style:left='{x}px'

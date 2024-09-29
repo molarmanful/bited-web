@@ -27,11 +27,6 @@ export default class Uc {
 
   blocks = $state.raw<Map<string, Range>>(new Map())
 
-  view = $derived.by(() => {
-    return this.blocks.get(this.st.block)
-      ?? [...this.st.font.glyphs.keys()].sort((a, b) => a - b)
-  })
-
   constructor(st: State) {
     this.st = st
 
