@@ -2,31 +2,27 @@ import type State from '$lib/State.svelte'
 
 import UC, { type Res } from '$lib/Unicode'
 
+const range = ([i0, i1]: [number, number]) => {
+  const res: number[] = []
+  for (let i = i0; i <= i1; i++)
+    res.push(i)
+  return res
+}
+
 export default class Uc {
   st: State
   ready = $state(false)
 
   blocks = $state.raw<Res['blocks']>(new Map())
-  codes = $state.raw<Res['codes']>([])
-  codesS = $derived(new Set(this.codes))
+  codes = $derived<number[]>([...this.blocks.values()].flatMap(range))
 
   view = $derived.by(() => {
-    if (this.st.block === 'all') {
+    if (this.st.block === 'all')
       return this.codes
-    }
 
     const block = this.blocks.get(this.st.block)
-    if (block) {
-      const [i0, i1] = block
-
-      const res: Res['codes'] = []
-      for (let i = i0; i <= i1; i++) {
-        if (this.codesS.has(i))
-          res.push(i)
-      }
-
-      return res
-    }
+    if (block)
+      return range(block)
 
     return [...this.st.font.glyphs.keys()].sort((a, b) => a - b)
   })
@@ -36,9 +32,8 @@ export default class Uc {
 
     $effect(() => {
       (async () => {
-        const { blocks, codes } = await UC()
+        const { blocks } = await UC()
         this.blocks = blocks
-        this.codes = codes
         this.ready = true
       })()
     })
