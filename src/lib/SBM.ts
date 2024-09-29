@@ -2,6 +2,11 @@
 
 type KsLike = SBM | Set<string>
 
+export interface Ser {
+  ks: Set<string>
+  size: [number, number]
+}
+
 export default class SBM {
   ks = new Set<string>()
   size: [number, number] = [0, 0] // h, w
@@ -11,6 +16,20 @@ export default class SBM {
     a.ks = new Set(this.ks)
     a.size = [...this.size]
     return a
+  }
+
+  get ser() {
+    return {
+      ks: this.ks,
+      size: this.size,
+    }
+  }
+
+  static deser({ ks, size }: Ser) {
+    const m = new SBM()
+    m.ks = ks
+    m.size = size
+    return m
   }
 
   get(y: number, x: number) {

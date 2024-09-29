@@ -1,4 +1,7 @@
+import type { Ser as GlyphSer } from '$lib/Glyph.svelte'
+
 import Glyph from '$lib/Glyph.svelte'
+import LF from 'localforage'
 import { SvelteMap } from 'svelte/reactivity'
 
 interface Metrics {
@@ -9,9 +12,15 @@ interface Metrics {
   width: number
 }
 
-// TODO: get/set from idb
+interface Ser {
+  name: string
+  metrics: Metrics
+  glyphs: GlyphSer[]
+}
+
 export default class Font {
   name = 'FONTNAME'
+  on = $state(false)
   metrics = $state<Metrics>({
     cap: 9,
     x: 7,
@@ -22,6 +31,50 @@ export default class Font {
 
   size = $derived(this.metrics.asc + this.metrics.desc)
   glyphs = new SvelteMap<number, Glyph>()
+
+  ser = $derived.by<Ser>(() => {
+    const gs: GlyphSer[] = []
+    for (const v of this.glyphs.values())
+      gs.push(v.ser)
+
+    return {
+      name: this.name,
+      metrics: $state.snapshot(this.metrics),
+      glyphs: gs,
+    }
+  })
+
+  constructor() {
+    $effect.pre(() => {
+      this.restore()
+    })
+
+    $effect(() => {
+      if (!this.on)
+        return
+      this.capture()
+    })
+  }
+
+  deser({ name, metrics, glyphs }: Ser) {
+    this.name = name
+    this.metrics = metrics
+
+    this.glyphs.clear()
+    for (const v of glyphs.values())
+      this.set(Glyph.deser(this, v))
+  }
+
+  async capture() {
+    await LF.setItem('bited-font', this.ser)
+  }
+
+  async restore() {
+    const res = await LF.getItem<Ser>('bited-font')
+    if (res)
+      this.deser(res)
+    this.on = true
+  }
 
   useMetrics(metrics: Partial<Metrics>) {
     Object.assign(this.metrics, metrics)

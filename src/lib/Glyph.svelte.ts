@@ -1,11 +1,19 @@
 import type Font from '$lib/Font.svelte'
+import type { Ser as SBMSer } from '$lib/SBM'
 
 import SBM from '$lib/SBM'
 
-export default class Glyph {
-  font: Font
+export interface Ser {
   code: number
   width: number
+  blob: Blob | null
+  mat: SBMSer
+}
+
+export default class Glyph {
+  font: Font
+  code = $state(-1)
+  width = $state(0)
   blob = $state<Blob | null>(null)
   mat = new SBM()
 
@@ -13,6 +21,21 @@ export default class Glyph {
     this.font = font
     this.code = code
     this.width = this.font.metrics.width
+  }
+
+  ser = $derived({
+    code: this.code,
+    width: this.width,
+    blob: this.blob,
+    mat: this.mat.ser,
+  })
+
+  static deser(font: Font, { code, width, blob, mat }: Ser) {
+    const g = new Glyph(font, code)
+    g.width = width
+    g.blob = blob
+    g.mat = SBM.deser(mat)
+    return g
   }
 
   img(h: number, w: number, f = () => { }) {
