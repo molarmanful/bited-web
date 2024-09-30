@@ -32,6 +32,9 @@ importers:
       '@unocss/reset':
         specifier: ^0.62.4
         version: 0.62.4
+      bdfparser:
+        specifier: ^2.2.5
+        version: 2.2.5
       core-js:
         specifier: ^3.38.1
         version: 3.38.1
@@ -950,6 +953,10 @@ packages:
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
+
+  bdfparser@2.2.5:
+    resolution: {integrity: sha512-XztB/5cPhbZlg9SI5vfA0glt9KUu5y5EXY8MQx6/5pFK3XYElSuZ3HvtMbeET55IJTl4E3oAHbitjjSgd9X2fA==}
+    engines: {node: '>= 12.0'}
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -3230,6 +3237,8 @@ snapshots:
   axobject-query@4.1.0: {}
 
   balanced-match@1.0.2: {}
+
+  bdfparser@2.2.5: {}
 
   binary-extensions@2.3.0: {}
 
