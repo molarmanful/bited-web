@@ -1,8 +1,9 @@
 /* eslint-disable no-restricted-globals */
 import { $Font } from 'bdfparser'
 
-const stream = async function* (file: File) {
-  const reader = file.stream().getReader()
+// damn you safari
+const lineStream = async function* (stream: ReadableStream<Uint8Array>) {
+  const reader = stream.getReader()
   const decoder = new TextDecoder('utf-8')
   let carry = ''
 
@@ -23,7 +24,7 @@ const stream = async function* (file: File) {
 }
 
 self.onmessage = async ({ data }) => {
-  const font = await $Font(stream(data))
+  const font = await $Font(lineStream(data.stream()))
   self.postMessage({
     length: font.length,
     headers: font.headers,

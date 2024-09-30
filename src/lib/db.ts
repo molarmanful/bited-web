@@ -1,4 +1,4 @@
-import type { Metrics } from '$lib/Font.svelte'
+import type { Meta, Metrics } from '$lib/Font.svelte'
 
 import Dexie, { type EntityTable } from 'dexie'
 
@@ -21,8 +21,8 @@ export interface StateSer {
 }
 
 export interface FontSer {
-  name?: string
-  metrics?: Partial<Metrics>
+  meta: Meta
+  metrics: Metrics
 }
 
 export interface GlyphSer {
