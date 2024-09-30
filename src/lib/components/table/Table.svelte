@@ -31,28 +31,6 @@
 
   const px = new Px()
 
-  class Scroll {
-    mute = $state(false)
-    to?: ReturnType<typeof setTimeout>
-
-    handle(t = 100) {
-      if (Math.abs(window.scrollY - scrollY) < innerHeight) {
-        this.off()
-        return
-      }
-      this.mute = true
-      this.to = setTimeout(() => this.mute = false, t)
-    }
-
-    off() {
-      this.mute = false
-      clearTimeout(this.to)
-    }
-  }
-
-  const scr = new Scroll()
-  $inspect(scr.mute)
-
   class Virt {
     view = $derived(st.uc.blocks.get(st.block)
       ?? [...st.glyphman.glyphs.keys()].sort((a, b) => a - b),
@@ -72,15 +50,15 @@
     h = $derived(this.rows * this.gh + this.gap)
     w = $derived(this.cols * this.gw + this.gap)
 
-    rowD = $derived(Math.ceil(innerHeight / this.gh))
+    rowD = $derived(innerHeight / this.gh | 0)
     rowS = $derived(this.rowD | 0)
     rowT = $derived(scrollY / this.gh | 0)
     rowB = $derived(this.rowT + this.rowD)
     row0 = $derived(Math.max(0, this.rowT - this.rowS))
-    row1 = $derived(Math.min(this.len, this.rowB + this.rowS))
+    row1 = $derived(Math.min(this.rows, this.rowB + this.rowS))
 
     i0 = $derived(this.row0 * this.cols)
-    i1 = $derived(Math.min(this.row1 * (this.cols + 1), this.len))
+    i1 = $derived(Math.min(this.row1 * this.cols, this.len))
 
     items = $derived.by(() => {
       const res = []
@@ -162,8 +140,6 @@
   }
 
   const sel = new Sel()
-
-  const test = (node, k) => console.log('test', k)
 </script>
 
 <svelte:window
@@ -177,7 +153,6 @@
     }
   }}
   onpointerup={() => sel.end()}
-  onscroll={() => scr.handle()}
   bind:devicePixelRatio
   bind:scrollY
   bind:innerHeight
@@ -208,7 +183,6 @@
     res.push(g1)
   }
   st.glyphman.set(res)
-  console.log('STRESSED')
 }}>TEST</button>
 
 {#if virt.view.length > 0}
@@ -227,7 +201,6 @@
           style:top='{y}px'
           class="{sel.isSel(k) ? 'bg-sel' : 'bg-bg'} absolute flex flex-col items-center"
           onclick={() => sel.edit(k)}
-          use:test={k}
         >
           <code style:height='{px.fsz}px' class='uni my-1'>
             {String.fromCodePoint(k)}
