@@ -22,7 +22,7 @@
     <strong>{st.font.name}</strong>
 
     <select {onchange} bind:value={st.block}>
-      <option selected value=''>Font Glyphs</option>
+      <option selected>Font Glyphs</option>
       {#each st.uc.blocks as [name, { i0, i1 }]}
         <option value={name}>
           {name}

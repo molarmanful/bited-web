@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import { Font } from 'bdfparser'
+import { $Font } from 'bdfparser'
 
 const stream = async function* (file: File) {
   const reader = file.stream().getReader()
@@ -23,6 +23,12 @@ const stream = async function* (file: File) {
 }
 
 self.onmessage = async ({ data }) => {
-  const font = await new Font().load_filelines(stream(data))
-  console.log(font)
+  const font = await $Font(stream(data))
+  self.postMessage({
+    length: font.length,
+    headers: font.headers,
+    props: font.props,
+    glyphs: font.glyphs,
+  })
+  self.close()
 }

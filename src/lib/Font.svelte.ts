@@ -9,7 +9,8 @@ export interface Metrics {
 }
 
 export default class Font {
-  name = $state('FONTNAME')
+  // TODO: rework with XLFD
+  name = $state('fontname')
   metrics = $state<Metrics>({
     cap: 9,
     x: 7,
@@ -26,8 +27,10 @@ export default class Font {
   })
 
   deser({ name, metrics }: Ser) {
-    this.name = name
-    this.metrics = metrics
+    if (name)
+      this.name = name
+    if (metrics)
+      this.useMetrics(metrics)
   }
 
   useMetrics(metrics: Partial<Metrics>) {

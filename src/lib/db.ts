@@ -21,8 +21,8 @@ export interface StateSer {
 }
 
 export interface FontSer {
-  name: string
-  metrics: Metrics
+  name?: string
+  metrics?: Partial<Metrics>
 }
 
 export interface GlyphSer {
