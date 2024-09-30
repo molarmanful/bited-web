@@ -2,6 +2,8 @@
   import type { Action } from 'svelte/action'
 
   import { cState } from '$lib/contexts'
+  import { db } from '$lib/db'
+  import { liveQ } from '$lib/util'
 
   import Man from './Man.svelte'
 
@@ -14,6 +16,11 @@
 
   let scale = $state(st.scale)
   let pw = $state(man.pw)
+
+  const metaQ = liveQ(() =>
+    db.transaction('r', db.ucdata, () => db.ucdata.get(st.code)),
+  )
+  const meta = $derived(metaQ.current)
 
   const render: Action = (node) => {
     man.init(node)
@@ -51,15 +58,13 @@
     <button onclick={() => man.mode = 'line'}>LINE</button>
   </div>
 
-  <!-- FIXME
-  {#if st.meta}
+  {#if meta}
     <div class='font-mono'>
       U+{st.code.toString(16).padStart(4, '0')}&nbsp;
-      {st.meta.category}&nbsp;
-      {st.meta.name}
+      {meta.category}&nbsp;
+      {meta.name}
     </div>
   {/if}
-   -->
 
   <div
     style:padding-top='{man.odd}px'
