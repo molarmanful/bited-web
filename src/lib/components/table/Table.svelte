@@ -1,6 +1,5 @@
 <script lang='ts'>
   import { cState } from '$lib/contexts'
-  import Glyph from '$lib/Glyph.svelte'
   import { Range } from '$lib/Uc.svelte'
   import { clickout, hex } from '$lib/util'
   import { SvelteSet } from 'svelte/reactivity'
@@ -171,9 +170,11 @@
   {/each}
 </select>
 
+<!--
 <button onclick={async () => {
   const g = new Glyph(st.font, 0)
   g.resize(st.w, st.w)
+  g.mat.not()
   await g.img(st.w, st.w)
   const res: Glyph[] = []
   for (const code of virt.view) {
@@ -183,7 +184,9 @@
     res.push(g1)
   }
   st.glyphman.set(res)
+  console.log('STRESS')
 }}>TEST</button>
+-->
 
 {#if virt.view.length > 0}
   <div class='mx-auto my-8 w-fit'>
