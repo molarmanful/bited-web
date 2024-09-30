@@ -33,7 +33,7 @@ button:not(.reset) {
 }
 
 .container {
-  @apply mx-auto;
+  @apply mx-auto px-8;
 }
 
 .uni {

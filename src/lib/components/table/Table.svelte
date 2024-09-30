@@ -146,17 +146,19 @@
 <Nav onchange={() => sel.reset()} />
 
 {#if virt.view.length > 0}
-  <div class='mb-24 mt-8 container' bind:clientWidth={cw}>
-    <div class='mx-auto w-fit'>
-      <div
-        style:height='{virt.h}px'
-        style:width='{virt.w}px'
-        class='pxhack relative b-(1 bord) bg-bord'
-        use:clickout={() => sel.reset()}
-      >
-        {#each virt.items as { x, y, k } (k)}
-          {@render item(x, y, k)}
-        {/each}
+  <div class='mb-24 mt-8 container'>
+    <div class='w-full' bind:clientWidth={cw}>
+      <div class='mx-auto w-fit'>
+        <div
+          style:height='{virt.h}px'
+          style:width='{virt.w}px'
+          class='pxhack relative b-(1 bord) bg-bord'
+          use:clickout={() => sel.reset()}
+        >
+          {#each virt.items as { x, y, k } (k)}
+            {@render item(x, y, k)}
+          {/each}
+        </div>
       </div>
     </div>
   </div>
