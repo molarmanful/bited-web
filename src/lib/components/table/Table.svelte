@@ -45,6 +45,8 @@
     i0 = $derived(this.row0 * this.cols)
     i1 = $derived(Math.min(this.row1 * this.cols, this.len))
 
+    gutw = $derived((this.cols * this.rows - this.len) * this.gw - 1)
+
     items = $derived.by(() => {
       const res = []
       let x = 0
@@ -158,6 +160,11 @@
           {#each virt.items as { x, y, k } (k)}
             {@render item(x, y, k)}
           {/each}
+          <div
+            style:height='{virt.vh}px'
+            style:width='{virt.gutw}px'
+            class='absolute bottom-0 right-0 dark:bg-bg'
+          ></div>
         </div>
       </div>
     </div>
