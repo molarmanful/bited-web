@@ -25,7 +25,6 @@ export default class Font {
     metrics: $state.snapshot(this.metrics),
   })
 
-  // TODO: load glyphs from db
   deser({ name, metrics }: Ser) {
     this.name = name
     this.metrics = metrics
