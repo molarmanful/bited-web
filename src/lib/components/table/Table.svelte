@@ -73,7 +73,6 @@
           x: x * this.gw,
           y: y * this.gh,
           k,
-          c: String.fromCodePoint(k),
         })
 
         x++
@@ -195,8 +194,7 @@
       class='relative skew-.0000000001 b-(1 bord) bg-bord'
       use:clickout={() => sel.reset()}
     >
-      {#each virt.items as { x, y, k, c } (k)}
-        <!-- FIXME -->
+      {#each virt.items as { x, y, k } (k)}
         {@const glyph = st.glyphman.get(k)}
         <button
           style:width='{virt.vw}px'
@@ -206,7 +204,7 @@
           onclick={() => sel.edit(k)}
         >
           <code style:height='{px.fsz}px' class='uni my-1'>
-            {c}
+            {String.fromCodePoint(k)}
           </code>
           <div class='h-0 w-full b-(t-1 bord)'></div>
 
