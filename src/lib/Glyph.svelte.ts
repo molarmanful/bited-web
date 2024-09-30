@@ -8,6 +8,7 @@ export default class Glyph {
   code = $state(-1)
   width = $state(0)
   blob = $state<Blob | null>(null)
+  url = $derived(this.blob ? URL.createObjectURL(this.blob) : void 0)
   mat = new SBM()
 
   ser = $derived({
