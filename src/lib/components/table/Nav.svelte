@@ -4,7 +4,8 @@
   import { ModeToggle } from '$lib/components'
   import { cState } from '$lib/contexts'
   import { hex } from '$lib/util'
-  import { Font } from 'bdfparser'
+
+  import { BDFRead } from '.'
 
   interface Props extends HTMLAttributes<HTMLElement> {
     onchange: (e: Event) => void
@@ -13,18 +14,6 @@
 
   const { onchange, clazz = '', ...rest }: Props = $props()
   const st = cState.get()
-
-  let files = $state<FileList>()
-
-  $effect(() => {
-    if (!files)
-      return
-    (async () => {
-      const file = await files[0].text()
-      const font = await new Font().load_filelines(file.split('\n').values())
-      console.log(font)
-    })()
-  })
 </script>
 
 <nav class='{clazz} fixed bottom-0 w-full bg-bg b-(t-1 bord) z-50 h-16 flex' {...rest}>
@@ -43,7 +32,7 @@
     </select>
 
     <!-- TODO: drag-drop -->
-    <input type='file' bind:files />
+    <BDFRead />
 
     <!-- TODO: put in settings -->
     <ModeToggle clazz='ml-auto' />

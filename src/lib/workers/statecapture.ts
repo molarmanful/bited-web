@@ -2,7 +2,7 @@
 
 import { db } from '$lib/db'
 
-self.onmessage = ({ data: { font, vscale, scale } }) => (async () => {
+self.onmessage = async ({ data: { font, vscale, scale } }) => {
   await db.transaction('rw', db.st, () => {
     db.st.bulkPut([
       { k: 'font', v: font },
@@ -10,4 +10,5 @@ self.onmessage = ({ data: { font, vscale, scale } }) => (async () => {
       { k: 'scale', v: scale },
     ])
   })
-})()
+  self.close()
+}
