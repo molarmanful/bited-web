@@ -33,7 +33,7 @@
 <div class='mx-auto container' bind:clientWidth={cw}>
   <button onclick={toggleMode}>TOGGLE</button>
 
-  {#if st.ready && st.uc.ready && st.glyphq}
+  {#if st.ready && st.uc.ready}
     {#if st.code >= 0}
       <Grid />
     {:else}

@@ -1,6 +1,7 @@
 import type Font from '$lib/Font.svelte'
 import type State from '$lib/State.svelte'
 
+import Glyph from '$lib/Glyph.svelte'
 import { used } from '$lib/util'
 import { mode as dmode } from 'mode-watcher'
 import * as PIXI from 'pixi.js'
@@ -21,6 +22,7 @@ interface Handlers {
 export default class Man {
   st: State
   font: Font
+  glyph: Glyph
 
   on = $state(false)
   pw = $state(12)
@@ -35,7 +37,7 @@ export default class Man {
   grid = new PIXI.Container()
   lines = new PIXI.Container()
   tiles: PIXI.Sprite[] = []
-  undoman = new UndoMan(this)
+  undoman: UndoMan
   tool?: Tool
   op = new Op(this)
   abort = new AbortController()
@@ -72,6 +74,10 @@ export default class Man {
   constructor(st: State) {
     this.st = st
     this.font = this.st.font
+    this.glyph
+      = this.st.glyphman.get(this.st.code)
+      ?? new Glyph(this.font, this.st.code)
+    this.undoman = new UndoMan(this)
 
     $effect(() => {
       if (!this.on)

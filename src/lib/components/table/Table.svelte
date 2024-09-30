@@ -33,7 +33,7 @@
 
   class Virt {
     view = $derived(st.uc.blocks.get(st.block)
-      ?? [...st.glyphs.keys()].sort((a, b) => a - b),
+      ?? [...st.glyphman.glyphs.keys()].sort((a, b) => a - b),
     )
 
     len = $derived(this.view.length)
@@ -148,7 +148,7 @@
     switch (e.key) {
       case 'Delete':
       case 'Backspace':
-        sel.each(k => st.font.delete(k))
+        sel.each(k => st.glyphman.delete([k]))
         sel.reset()
         break
     }
@@ -172,19 +172,20 @@
   {/each}
 </select>
 
-<button onclick={() => {
+<button onclick={async () => {
   const g = new Glyph(st.font, 0)
   g.resize(st.w, st.w)
   g.mat.not()
-  g.img(st.w, st.w, () => {
-    for (const code of virt.view) {
-      const g1 = new Glyph(st.font, code)
-      g1.mat = g.mat.clone()
-      g1.blob = g.blob
-      st.font.set(g1)
-    }
-    console.log('STRESSED')
-  })
+  await g.img(st.w, st.w)
+  const res: Glyph[] = []
+  for (const code of virt.view) {
+    const g1 = new Glyph(st.font, code)
+    g1.mat = g.mat.clone()
+    g1.blob = g.blob
+    res.push(g1)
+  }
+  st.glyphman.set(res)
+  console.log('STRESSED')
 }}>TEST</button>
 
 {#if virt.view.length > 0}
@@ -197,7 +198,7 @@
     >
       {#each virt.items as { x, y, k, c } (k)}
         <!-- FIXME -->
-        {@const glyph = void 0}
+        {@const glyph = st.glyphman.get(k)}
         <button
           style:width='{virt.vw}px'
           style:left='{x}px'

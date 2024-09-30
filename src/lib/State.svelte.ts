@@ -1,9 +1,10 @@
-import { db, type StateSer as Ser } from '$lib/db'
+import type { StateSer as Ser, StateSer } from '$lib/db'
+
 import Font from '$lib/Font.svelte'
+import GlyphMan from '$lib/GlyphMan.svelte'
 import Uc from '$lib/Uc.svelte'
-import { liveQ } from '$lib/util'
-import Capture from '$lib/workers/statecapture?worker'
-import Restore from '$lib/workers/staterestore?worker'
+import StateCapture from '$lib/workers/statecapture?worker'
+import StateRestore from '$lib/workers/staterestore?worker'
 
 export default class State {
   ready = $state(false)
@@ -24,18 +25,7 @@ export default class State {
     scale: this.scale,
   })
 
-  #glyphq = liveQ(() =>
-    db.transaction('r', db.glyphs, async () => {
-      const [glyphs, glyph] = await Promise.all([
-        db.glyphs.toArray(),
-        db.glyphs.get(this.code),
-      ])
-      return { glyphs, glyph }
-    }),
-  )
-
-  glyphq = $derived(this.#glyphq.current)
-  glyphs = $derived(new Map(this.glyphq.glyphs.map(g => [g.code, g])))
+  glyphman = new GlyphMan(this)
 
   constructor() {
     $effect.pre(() => {
@@ -53,17 +43,27 @@ export default class State {
   }
 
   capture() {
-    const C = new Capture()
+    const C = new StateCapture()
     C.postMessage(this.ser)
   }
 
   async restore() {
     // TODO: verify that this works
     await navigator?.storage?.persist?.()
-    const R = new Restore()
-    R.onmessage = ({ data }) => {
-      this.deser(data)
-      this.ready = true
-    }
+
+    const SR = new StateRestore()
+
+    await Promise.all([
+      new Promise<void>((res) => {
+        SR.onmessage = ({ data }: { data: StateSer }) => {
+          this.deser(data)
+          res()
+        }
+      }),
+
+      this.glyphman.restore(),
+    ])
+
+    this.ready = true
   }
 }

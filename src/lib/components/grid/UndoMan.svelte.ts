@@ -1,21 +1,26 @@
 import type SBM from '$lib/SBM'
+import type State from '$lib/State.svelte'
 
 import type Man from './Man.svelte'
 
 import { used } from '$lib/util'
 
 export default class UndoMan {
+  st: State
   man: Man
   undos = $state<UndoItem[]>([])
   redos = $state<UndoItem[]>([])
 
   constructor(man: Man) {
     this.man = man
+    this.st = man.st
 
     $effect(() => {
-      used(this.undos, this.redos)
-      this.man.font.set(this.man.glyph)
-      this.man.glyph.img(this.man.st.vw, this.man.st.vw)
+      used(this.undos, this.redos);
+      (async () => {
+        await this.man.glyph.img(this.st.vw, this.st.vw)
+        this.st.glyphman.set([this.man.glyph])
+      })()
     })
   }
 

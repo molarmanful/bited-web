@@ -31,7 +31,7 @@ export default class Glyph {
     return g
   }
 
-  img(h: number, w: number, f = () => { }) {
+  img(h: number, w: number) {
     const [h0, w0] = this.mat.size
     this.resize(h, w)
 
@@ -61,9 +61,12 @@ export default class Glyph {
     ctx.putImageData(imageData, 0, 0)
 
     this.blob = null
-    cv.toBlob((blob) => {
-      this.blob = blob
-      f()
+
+    return new Promise<void>((res) => {
+      cv.toBlob((blob) => {
+        this.blob = blob
+        res()
+      })
     })
   }
 
