@@ -4,9 +4,6 @@
   import { Grid, Table } from '$lib/components'
   import { cState } from '$lib/contexts'
   import State from '$lib/State.svelte'
-  import { toggleMode } from 'mode-watcher'
-
-  let cw = $state(0)
 
   const st = new State()
   cState.set(st)
@@ -30,22 +27,18 @@
   <title>bited | Bitmap Font Designer</title>
 </svelte:head>
 
-<div class='mx-auto container' bind:clientWidth={cw}>
-  <button onclick={toggleMode}>TOGGLE</button>
-
-  {#if st.ready && st.uc.ready}
-    {#if st.code >= 0}
-      <Grid />
-    {:else}
-      <Table {cw} />
-    {/if}
+{#if st.ready && st.uc.ready}
+  {#if st.code >= 0}
+    <Grid />
   {:else}
-    <div class='h-screen flex items-center justify-center'>
-      loading{#if !st.ready}
-        &nbsp;saved state
-      {:else if !st.uc.ready}
-        &nbsp;unicode data
-      {/if}...
-    </div>
+    <Table />
   {/if}
-</div>
+{:else}
+  <div class='h-screen flex items-center justify-center'>
+    loading{#if !st.ready}
+      &nbsp;saved state
+    {:else if !st.uc.ready}
+      &nbsp;unicode data
+    {/if}...
+  </div>
+{/if}

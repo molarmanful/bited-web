@@ -1,6 +1,10 @@
 :root {
   @apply font-sans1 bg-bg;
 
+  --fsz: 16px;
+  --fsz2: calc(var(--fsz) * 2);
+  --fsz3: calc(var(--fsz) * 3);
+
   --c-fg: #000;
   --c-bg: #fff;
   --c-bord: #000;
@@ -24,10 +28,30 @@ canvas {
   @apply image-render-pixel;
 }
 
+button:not(.reset) {
+  @apply bg-transparent p-2 b-(1 bord);
+}
+
+.container {
+  @apply mx-auto;
+}
+
 .uni {
   @apply contrast-100.00001 leading-none;
-  font-size: var(--fsz, 16px);
+  font-size: var(--fsz);
   font-family: UnifontExMono, monospace;
   text-size-adjust: none;
   -webkit-text-size-adjust: none;
+}
+
+.fsz2 {
+  font-size: var(--fsz2);
+}
+
+.fsz3 {
+  font-size: var(--fsz3);
+}
+
+.pxhack {
+  @apply skew-.0000000001;
 }

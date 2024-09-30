@@ -1,34 +1,20 @@
 <script lang='ts'>
   import { cState } from '$lib/contexts'
+  import Px from '$lib/Px.svelte'
   import { Range } from '$lib/Uc.svelte'
-  import { clickout, hex } from '$lib/util'
+  import { clickout } from '$lib/util'
   import { SvelteSet } from 'svelte/reactivity'
 
-  interface Props {
-    cw: number
-  }
+  import { Nav } from '.'
 
-  const { cw }: Props = $props()
   const st = cState.get()
 
-  let devicePixelRatio = $state(1)
+  const devicePixelRatio = $state({ x: 1 })
   let scrollY = $state(0)
   let innerHeight = $state(0)
+  let cw = $state(0)
 
-  class Px {
-    dpr = $derived(+devicePixelRatio.toFixed(2))
-    dprd = $derived(this.dpr | 0)
-    scale = $derived(this.dprd / this.dpr)
-    fsz = $derived(16 * this.scale)
-
-    constructor() {
-      $effect(() => {
-        document.body.style.setProperty('--fsz', `${this.fsz}px`)
-      })
-    }
-  }
-
-  const px = new Px()
+  const px = new Px(devicePixelRatio)
 
   class Virt {
     view = $derived(st.uc.blocks.get(st.block)
@@ -152,25 +138,75 @@
     }
   }}
   onpointerup={() => sel.end()}
-  bind:devicePixelRatio
+  bind:devicePixelRatio={devicePixelRatio.x}
   bind:scrollY
   bind:innerHeight
 />
 
-<select
-  onchange={() => sel.reset()}
-  bind:value={st.block}
->
-  <option selected value=''>Font Glyphs</option>
-  {#each st.uc.blocks as [name, { i0, i1 }]}
-    <option value={name}>
-      {name}
-      ({hex(i0)}-{hex(i1 - 1)})
-    </option>
-  {/each}
-</select>
+<Nav onchange={() => sel.reset()} />
 
-<!--
+{#if virt.view.length > 0}
+  <div class='mb-24 mt-8 container' bind:clientWidth={cw}>
+    <div class='mx-auto w-fit'>
+      <div
+        style:height='{virt.h}px'
+        style:width='{virt.w}px'
+        class='pxhack relative b-(1 bord) bg-bord'
+        use:clickout={() => sel.reset()}
+      >
+        {#each virt.items as { x, y, k } (k)}
+          {@render item(x, y, k)}
+        {/each}
+      </div>
+    </div>
+  </div>
+{:else}
+  <div class='h-screen flex items-center justify-center'>
+    no glyphs... yet
+  </div>
+{/if}
+
+{#snippet item(x: number, y: number, k: number)}
+  <button
+    style:width='{virt.vw}px'
+    style:left='{x}px'
+    style:top='{y}px'
+    class="{sel.isSel(k) ? 'bg-sel' : 'bg-bg'} reset absolute flex flex-col items-center"
+    onclick={() => sel.edit(k)}
+  >
+    {@render char(k)}
+    <div class='h-0 w-full b-(t-1 bord)'></div>
+    {@render img(k)}
+  </button>
+{/snippet}
+
+{#snippet char(k: number)}
+  <code style:height='{px.fsz}px' class='uni my-1'>
+    {String.fromCodePoint(k)}
+  </code>
+{/snippet}
+
+{#snippet img(k: number)}
+  {@const glyph = st.glyphman.get(k)}
+  <div
+    style:height='{virt.vw}px'
+    style:width='{virt.vw}px'
+    class="{sel.isSel(k) ? 'bg-sel' : glyph && glyph.url ? 'bg-bg' : 'bg-dis'} "
+  >
+    {#if glyph && glyph.url}
+      <img
+        style:height='{virt.vw}px'
+        style:width='{virt.vw}px'
+        class='text-transparent image-render-pixel dark:invert'
+        alt='Bitmap glyph at Unicode codepoint {k}'
+        draggable='false'
+        src={glyph.url}
+      />
+    {/if}
+  </div>
+{/snippet}
+
+<!-- TODO: deal with this
 <button onclick={async () => {
   const g = new Glyph(st.font, 0)
   g.resize(st.w, st.w)
@@ -187,55 +223,3 @@
   console.log('STRESS')
 }}>TEST</button>
 -->
-
-{#if virt.view.length > 0}
-  <div class='mx-auto my-8 w-fit'>
-    <div
-      style:height='{virt.h}px'
-      style:width='{virt.w}px'
-      class='relative skew-.0000000001 b-(1 bord) bg-bord'
-      use:clickout={() => sel.reset()}
-    >
-      {#each virt.items as { x, y, k } (k)}
-        {@const glyph = st.glyphman.get(k)}
-        <button
-          style:width='{virt.vw}px'
-          style:left='{x}px'
-          style:top='{y}px'
-          class="{sel.isSel(k) ? 'bg-sel' : 'bg-bg'} absolute flex flex-col items-center"
-          onclick={() => sel.edit(k)}
-        >
-          <code style:height='{px.fsz}px' class='uni my-1'>
-            {String.fromCodePoint(k)}
-          </code>
-          <div class='h-0 w-full b-(t-1 bord)'></div>
-
-          <div
-            style:height='{virt.vw}px'
-            style:width='{virt.vw}px'
-            class="{sel.isSel(k)
-              ? 'bg-sel'
-              : glyph && glyph.url
-              ? 'bg-bg'
-              : 'bg-dis'} "
-          >
-            {#if glyph && glyph.url}
-              <img
-                style:height='{virt.vw}px'
-                style:width='{virt.vw}px'
-                class='text-transparent image-render-pixel dark:invert'
-                alt='Bitmap glyph at Unicode codepoint {k}'
-                draggable='false'
-                src={glyph.url}
-              />
-            {/if}
-          </div>
-        </button>
-      {/each}
-    </div>
-  </div>
-{:else}
-  <div class='h-screen flex items-center justify-center'>
-    no glyphs... yet
-  </div>
-{/if}

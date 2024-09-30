@@ -1,5 +1,6 @@
 import extractorSvelte from '@unocss/extractor-svelte'
 import {
+  presetIcons,
   presetUno,
   presetWebFonts,
   transformerDirectives,
@@ -16,6 +17,12 @@ export default {
           { name: 'Satoshi', weights: [400, 700], provider: 'fontshare' },
         ],
         mono: ['Fira Code'],
+      },
+    }),
+    presetIcons({
+      extraProperties: {
+        'display': 'inline-block',
+        'vertical-align': 'middle',
       },
     }),
   ],
