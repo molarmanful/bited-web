@@ -147,10 +147,11 @@
 
 <Nav onchange={() => sel.reset()} />
 
+<!-- TODO: drag-drop -->
+<BDFRead />
+
 {#if virt.view.length > 0}
   <div class='mb-24 mt-8 container'>
-    <!-- TODO: drag-drop -->
-    <BDFRead />
     <div class='w-full' bind:clientWidth={cw}>
       <div class='mx-auto w-fit'>
         <div

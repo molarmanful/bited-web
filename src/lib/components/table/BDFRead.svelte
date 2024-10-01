@@ -1,5 +1,6 @@
 <script lang='ts'>
-  import type { BDFRes } from '$lib/Font.svelte'
+  import type { BDFRes as FontRes } from '$lib/Font.svelte'
+  import type { BDFRes as GlyphRes } from '$lib/GlyphMan.svelte'
   import type { HTMLInputAttributes } from 'svelte/elements'
 
   import { cState } from '$lib/contexts'
@@ -19,12 +20,19 @@
       return
 
     const bdf = new BDF()
-    bdf.onmessage = ({ data }: MessageEvent<BDFRes>) => {
+    // FIXME: remove
+    bdf.onmessage = ({ data }: MessageEvent<FontRes | GlyphRes>) => {
       if (!data)
         return
+      if (Array.isArray(data)) {
+        if (data[0] !== 65)
+          return
+        st.glyphman.read(data)
+        return
+      }
       st.font.read(data)
+      st.capture()
     }
-
     bdf.postMessage(files[0])
   })
 </script>

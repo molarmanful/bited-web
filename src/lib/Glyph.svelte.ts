@@ -1,7 +1,12 @@
 import type { GlyphSer as Ser } from '$lib/db'
 import type Font from '$lib/Font.svelte'
+import type { GlyphMeta } from 'bdfparser'
 
 import SBM from '$lib/SBM'
+
+export interface Meta {
+
+}
 
 export default class Glyph {
   font: Font
@@ -21,7 +26,35 @@ export default class Glyph {
   constructor(font: Font, code: number) {
     this.font = font
     this.code = code
-    this.width = this.font.width
+    this.width = this.font.metrics.dw_x
+  }
+
+  static read(font: Font, {
+    codepoint: code,
+    dwx0: dwx,
+    dwy0: dwy,
+    bbw,
+    bbh,
+    bbxoff,
+    bbyoff,
+    hexdata,
+  }: GlyphMeta, vw: number) {
+    const g = new Glyph(font, code)
+    g.width = dwx ?? g.width
+
+    g.mat.resize(bbh, bbw)
+    for (const [y, h] of hexdata.entries()) {
+      let b = BigInt(`0x${h}`)
+      for (let x = h.length * 4; x-- > 0 && b;) {
+        if (b & 1n)
+          g.mat.set(y, x, true)
+        b >>= 1n
+      }
+    }
+
+    g.img(vw, vw)
+
+    return g
   }
 
   static deser(font: Font, { code, width, blob, mat }: Ser) {
@@ -79,13 +112,13 @@ export default class Glyph {
   }
 
   get center(): [number, number] { // y, x
-    return [this.font.size / 2 | 0, this.width / 2 | 0]
+    return [this.font.size >> 1, this.width >> 1]
   }
 
   get trdiff(): [number, number] {
     const [h, w] = this.mat.size
+    const [y, x] = [h >> 1, w >> 1]
     const [cy, cx] = this.center
-    const [y, x] = [h / 2 | 0, w / 2 | 0]
     return [y - cy, x - cx]
   }
 

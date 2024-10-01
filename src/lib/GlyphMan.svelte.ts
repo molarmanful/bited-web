@@ -1,6 +1,6 @@
 import type { GlyphSer } from '$lib/db'
-import type { BDFRes } from '$lib/Font.svelte'
 import type State from '$lib/State.svelte'
+import type { GlyphMeta } from 'bdfparser'
 
 import type Font from './Font.svelte'
 
@@ -9,7 +9,7 @@ import GlyphDB from '$lib/workers/glyphdb?worker'
 import GlyphRestore from '$lib/workers/glyphrestore?worker'
 import { SvelteMap } from 'svelte/reactivity'
 
-// TODO: load glyphs
+export type BDFRes = [number, GlyphMeta]
 
 export default class GlyphMan {
   st: State
@@ -34,7 +34,8 @@ export default class GlyphMan {
     })
   }
 
-  read({ glyphs }: BDFRes) {
+  read([code, meta]: BDFRes) {
+    this.glyphs.set(code, Glyph.read(this.font, meta, this.st.vw))
   }
 
   get(code: number) {

@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-globals */
+
 import { $Font } from 'bdfparser'
 
 // damn you safari
@@ -25,11 +26,19 @@ const lineStream = async function* (stream: ReadableStream<Uint8Array>) {
 
 self.onmessage = async ({ data }) => {
   const font = await $Font(lineStream(data.stream()))
+
   self.postMessage({
     length: font.length,
     headers: font.headers,
     props: font.props,
-    glyphs: font.glyphs,
   })
+
+  for (const glyph of font.iterglyphs()) {
+    if (!glyph)
+      continue
+    const { meta } = glyph
+    self.postMessage([meta.codepoint, meta])
+  }
+
   self.close()
 }

@@ -13,6 +13,8 @@ export interface Meta {
   ch_enc: string
 }
 
+// TODO: support METRICSSET, DWIDTH1, VVECTOR
+
 export interface Metrics {
   px_size: number
   pt_size: number
@@ -20,6 +22,9 @@ export interface Metrics {
   res_y: number
   // TODO: make sure math checks out for w < 0
   avg_w: number
+
+  dw_x: number
+  dw_y: number
 
   cap_h: number
   x_h: number
@@ -63,6 +68,9 @@ export default class Font {
     res_y: 75,
     avg_w: 80,
 
+    dw_x: 8,
+    dw_y: 0,
+
     cap_h: 9,
     x_h: 7,
     asc: 14,
@@ -88,7 +96,6 @@ export default class Font {
     this.meta.ch_enc,
   ].join('-')}`)
 
-  width = $derived(Math.round(this.metrics.avg_w / 10))
   size = $derived(this.metrics.px_size || this.metrics.asc + this.metrics.desc)
 
   ser = $derived<Ser>({
@@ -96,10 +103,6 @@ export default class Font {
     metrics: $state.snapshot(this.metrics),
     misc: $state.snapshot(this.misc),
   })
-
-  constructor() {
-    $inspect(this.width)
-  }
 
   deser({ meta, metrics }: Ser) {
     this.useMeta(meta)
@@ -143,13 +146,17 @@ export default class Font {
 
     const h = num(props.pixel_size ?? px_size ?? headers?.fbby)
     const desc = Math.max(0, num(props.font_descent ?? Math.abs(num(headers?.fbbyoff))))
+    const avg_w1 = num(props.average_width ?? avg_w?.replace('~', '-'))
 
     this.useMetrics({
-      px_size: num(h),
+      px_size: h,
       pt_size: num(props.point_size ?? pt_size),
       res_x: num(headers?.xres ?? props.resolution_x ?? res_x),
       res_y: num(headers?.yres ?? props.resolution_y ?? res_y),
-      avg_w: num(props.average_width ?? avg_w?.replace('~', '-')),
+      avg_w: avg_w1,
+
+      dw_x: headers?.dwx0 ?? Math.round(avg_w1 / 10),
+      dw_y: num(headers?.dwy0),
 
       cap_h: num(props.cap_height),
       x_h: num(props.x_height),
