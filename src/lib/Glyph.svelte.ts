@@ -21,7 +21,7 @@ export default class Glyph {
   constructor(font: Font, code: number) {
     this.font = font
     this.code = code
-    this.width = this.font.metrics.avg_w
+    this.width = this.font.width
   }
 
   static deser(font: Font, { code, width, blob, mat }: Ser) {

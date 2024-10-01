@@ -1,7 +1,7 @@
 import type { FontSer as Ser } from '$lib/db'
 import type { Font as BDFFont } from 'bdfparser'
 
-interface MetaBase {
+export interface Meta {
   foundry: string
   family: string
   weight: string
@@ -13,8 +13,6 @@ interface MetaBase {
   ch_enc: string
 }
 
-export type Meta = MetaBase & Record<string, string>
-
 export interface Metrics {
   px_size: number
   pt_size: number
@@ -22,16 +20,27 @@ export interface Metrics {
   res_y: number
   // TODO: make sure math checks out for w < 0
   avg_w: number
-  cap: number
-  x: number
+
+  cap_h: number
+  x_h: number
   asc: number
   desc: number
 }
 
-interface BDFRes {
+export type Misc = Record<string, string>
+
+export interface BDFRes {
   headers: BDFFont['headers']
   props: BDFFont['props']
   glyphs: BDFFont['glyphs']
+}
+
+const clean = <T>(o: Record<string, T | null | undefined>) => {
+  for (const k in o) {
+    if (o[k] == null)
+      delete o[k]
+  }
+  return o as Record<string, T>
 }
 
 export default class Font {
@@ -52,12 +61,15 @@ export default class Font {
     pt_size: 150,
     res_x: 75,
     res_y: 75,
-    avg_w: 8,
-    cap: 9,
-    x: 7,
+    avg_w: 80,
+
+    cap_h: 9,
+    x_h: 7,
     asc: 14,
     desc: 2,
   })
+
+  misc = $state<Misc>({})
 
   font = $derived(`-${[
     this.meta.foundry,
@@ -76,22 +88,28 @@ export default class Font {
     this.meta.ch_enc,
   ].join('-')}`)
 
-  size = $derived(this.metrics.asc + this.metrics.desc)
+  width = $derived(Math.round(this.metrics.avg_w / 10))
+  size = $derived(this.metrics.px_size || this.metrics.asc + this.metrics.desc)
 
   ser = $derived<Ser>({
     meta: $state.snapshot(this.meta),
     metrics: $state.snapshot(this.metrics),
+    misc: $state.snapshot(this.misc),
   })
+
+  constructor() {
+    $inspect(this.width)
+  }
 
   deser({ meta, metrics }: Ser) {
     this.useMeta(meta)
     this.useMetrics(metrics)
   }
 
-  read({ headers, props, glyphs }: BDFRes) {
+  read({ headers, props }: BDFRes) {
     const num = (s?: string | number | null) => {
       const n = +(s ?? 0)
-      return Number.isNaN(n) ? n : 0
+      return Number.isNaN(n) ? 0 : n
     }
 
     const [
@@ -123,29 +141,45 @@ export default class Font {
       ch_enc: props.charset_encoding ?? ch_enc,
     })
 
-    // TODO: bbx fallback calc
+    const h = num(props.pixel_size ?? px_size ?? headers?.fbby)
+    const desc = Math.max(0, num(props.font_descent ?? Math.abs(num(headers?.fbbyoff))))
+
     this.useMetrics({
-      px_size: num(props.pixel_size ?? px_size),
+      px_size: num(h),
       pt_size: num(props.point_size ?? pt_size),
       res_x: num(headers?.xres ?? props.resolution_x ?? res_x),
       res_y: num(headers?.yres ?? props.resolution_y ?? res_y),
-      avg_w: num(props.average_width ?? avg_w),
-      cap: num(props.capheight),
-      x: num(props.xheight),
-      asc: num(props.font_ascent),
-      desc: num(props.font_ascent),
+      avg_w: num(props.average_width ?? avg_w?.replace('~', '-')),
+
+      cap_h: num(props.cap_height),
+      x_h: num(props.x_height),
+      asc: Math.max(0, num(props.font_ascent ?? h - desc)),
+      desc: num(desc),
     })
+
+    // god hath forsaken us
+    const purge
+      = [...`${this.read}`.matchAll(/props\s*\.\s*(\w+)/g)]
+        .map(([, x]) => x)
+
+    const misc = { ...props }
+    for (const k in misc) {
+      if (purge.includes(k))
+        delete misc[k]
+    }
+
+    this.useMisc(misc)
   }
 
   useMeta(meta: Partial<Meta>) {
-    for (const k in meta) {
-      if (meta[k] == null)
-        delete meta[k]
-    }
-    Object.assign(this.meta, meta)
+    Object.assign(this.meta, clean(meta))
   }
 
   useMetrics(metrics: Partial<Metrics>) {
-    Object.assign(this.metrics, metrics)
+    Object.assign(this.metrics, clean(metrics))
+  }
+
+  useMisc(misc: BDFFont['props']) {
+    Object.assign(this.misc, clean(misc))
   }
 }

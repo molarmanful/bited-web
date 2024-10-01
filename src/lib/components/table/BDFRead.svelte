@@ -1,4 +1,5 @@
 <script lang='ts'>
+  import type { BDFRes } from '$lib/Font.svelte'
   import type { HTMLInputAttributes } from 'svelte/elements'
 
   import { cState } from '$lib/contexts'
@@ -21,9 +22,7 @@
     bdf.onmessage = ({ data }: MessageEvent<BDFRes>) => {
       if (!data)
         return
-      console.log(data)
       st.font.read(data)
-    // TODO: load glyphs
     }
 
     bdf.postMessage(files[0])

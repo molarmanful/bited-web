@@ -1,17 +1,24 @@
 import type { GlyphSer } from '$lib/db'
+import type { BDFRes } from '$lib/Font.svelte'
 import type State from '$lib/State.svelte'
+
+import type Font from './Font.svelte'
 
 import Glyph from '$lib/Glyph.svelte'
 import GlyphDB from '$lib/workers/glyphdb?worker'
 import GlyphRestore from '$lib/workers/glyphrestore?worker'
 import { SvelteMap } from 'svelte/reactivity'
 
+// TODO: load glyphs
+
 export default class GlyphMan {
   st: State
+  font: Font
   glyphs = new SvelteMap<number, Glyph>()
 
   constructor(st: State) {
     this.st = st
+    this.font = this.st.font
   }
 
   async restore() {
@@ -20,11 +27,14 @@ export default class GlyphMan {
     await new Promise<void>((res) => {
       GR.onmessage = ({ data }: { data: GlyphSer[] }) => {
         this.glyphs = new SvelteMap(
-          data.map(g => [g.code, Glyph.deser(this.st.font, g)]),
+          data.map(g => [g.code, Glyph.deser(this.font, g)]),
         )
         res()
       }
     })
+  }
+
+  read({ glyphs }: BDFRes) {
   }
 
   get(code: number) {

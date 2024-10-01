@@ -214,8 +214,8 @@ export default class Man {
 
     const htints = new Map([
       [oy - this.font.metrics.asc, this.theme.asc],
-      [oy - this.font.metrics.cap, this.theme.cap],
-      [oy - this.font.metrics.x, this.theme.x],
+      [oy - this.font.metrics.cap_h, this.theme.cap],
+      [oy - this.font.metrics.x_h, this.theme.x],
       [bly, this.theme.desc],
       [oy, this.theme.origin],
     ])
