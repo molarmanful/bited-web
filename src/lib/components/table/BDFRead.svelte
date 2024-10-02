@@ -41,6 +41,8 @@
     }
 
     st.font.read(data)
+    st.vscale = st.vscale_min
+    st.scale = st.vscale_min + 1
     st.capture()
   }
 }} type='file' bind:files {...rest} />

@@ -22,9 +22,13 @@ export default class State {
       : db.transaction('r', db.ucdata, () => db.ucdata.get(this.code)),
   )
 
-  vscale = $state(3)
+  vscale_min = $derived(
+    (Math.max(this.font.size, this.font.metrics.dw_x) + 15) >> 3,
+  )
+
+  vscale = $state(this.vscale_min)
   vw = $derived(8 * this.vscale)
-  scale = $state(4)
+  scale = $state(this.vscale_min + 1)
   w = $derived(8 * this.scale)
 
   ser = $derived<Ser>({

@@ -1,4 +1,5 @@
 import type { FontSer as Ser } from '$lib/db'
+import type State from '$lib/State.svelte'
 import type { Font as BDFFont } from 'bdfparser'
 
 export interface Meta {

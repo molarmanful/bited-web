@@ -226,21 +226,3 @@
     {/if}
   </div>
 {/snippet}
-
-<!-- TODO: deal with this
-<button onclick={async () => {
-  const g = new Glyph(st.font, 0)
-  g.resize(st.w, st.w)
-  g.mat.not()
-  await g.img(st.w, st.w)
-  const res: Glyph[] = []
-  for (const code of virt.view) {
-    const g1 = new Glyph(st.font, code)
-    g1.mat = g.mat.clone()
-    g1.blob = g.blob
-    res.push(g1)
-  }
-  st.glyphman.set(res)
-  console.log('STRESS')
-}}>TEST</button>
--->

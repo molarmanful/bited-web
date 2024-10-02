@@ -32,7 +32,7 @@
       man.gen()
     }}>
       <!-- TODO: change -->
-      <input min={(man.font.size + 15) >> 3} required type='number' bind:value={scale} />
+      <input min={st.vscale_min} required type='number' bind:value={scale} />
       <input min='4' required step='4' type='number' bind:value={pw} />
       <button type='submit'>UPDATE</button>
     </form>
