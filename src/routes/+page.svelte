@@ -36,7 +36,7 @@
 {:else}
   <div class='h-screen flex items-center justify-center'>
     loading{#if !st.ready}
-      &nbsp;saved state
+      &nbsp;save data
     {:else if !st.uc.ready}
       &nbsp;unicode data
     {/if}...

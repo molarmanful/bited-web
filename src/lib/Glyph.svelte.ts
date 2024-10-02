@@ -29,33 +29,21 @@ export default class Glyph {
     this.width = this.font.metrics.dw_x
   }
 
-  static read(font: Font, {
+  static read(font: Font, vw: number, {
     codepoint: code,
     dwx0: dwx,
     dwy0: dwy,
-    bbw,
     bbh,
     bbxoff,
     bbyoff,
-    hexdata,
-  }: GlyphMeta, vw: number, f = () => { }) {
+  }: GlyphMeta, ks: Set<string>, f = () => { }) {
     const g = new Glyph(font, code)
     g.width = dwx ?? g.width
-
     g.mat.resize(vw, vw)
-    for (const [y, h] of hexdata.entries()) {
-      let b = BigInt(`0x${h}`)
-      for (let x = h.length * 4; x-- > 0 && b;) {
-        if (b & 1n)
-          g.mat.set(y, x, true)
-        b >>= 1n
-      }
-    }
-
+    g.mat.ks = ks
     const [dy, dx] = g.trdiff
     g.mat.translate(font.metrics.asc - bbh - bbyoff + dy, bbxoff + dx)
     g.img(vw, vw).then(f)
-
     return g
   }
 

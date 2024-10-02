@@ -9,7 +9,7 @@ import GlyphDB from '$lib/workers/glyphdb?worker'
 import GlyphRestore from '$lib/workers/glyphrestore?worker'
 import { SvelteMap } from 'svelte/reactivity'
 
-export type BDFRes = [number, GlyphMeta][]
+export type BDFRes = [number, GlyphMeta, Set<string>][]
 
 export default class GlyphMan {
   st: State
@@ -19,6 +19,11 @@ export default class GlyphMan {
   constructor(st: State) {
     this.st = st
     this.font = this.st.font
+
+    $effect(() => {
+      if (this.glyphs.size === this.font.length)
+        this.font.length = void 0
+    })
   }
 
   async restore() {
@@ -39,13 +44,19 @@ export default class GlyphMan {
     let now = Date.now()
     let now1 = Date.now()
     let q: GlyphSer[] = []
+
     for (let i = 0; i < res.length; i++) {
-      const [code, meta] = res[i]
+      const [code, meta, ks] = res[i]
       if (code < 0)
         continue
 
-      const glyph = Glyph.read(this.font, meta, this.st.vw, () => {
+      const glyph = Glyph.read(this.font, this.st.vw, meta, ks, () => {
         q.push(glyph.ser)
+        if (i < res.length - 1)
+          return
+        gd.postMessage(q)
+        gd.postMessage('CLOSE')
+        q = []
       })
       this.glyphs.set(code, glyph)
 
@@ -54,7 +65,7 @@ export default class GlyphMan {
         now = Date.now()
       }
 
-      if (Date.now() - now1 > 100) {
+      if (Date.now() - now1 > 100 && q.length) {
         gd.postMessage(q)
         q = []
         now1 = Date.now()
@@ -76,5 +87,11 @@ export default class GlyphMan {
     for (const code of codes) this.glyphs.delete(code)
     const gd = new GlyphDB({ name: 'del' })
     gd.postMessage(codes)
+  }
+
+  clear() {
+    this.glyphs.clear()
+    const gd = new GlyphDB({ name: 'clr' })
+    gd.postMessage([])
   }
 }

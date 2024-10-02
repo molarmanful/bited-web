@@ -35,9 +35,9 @@ export interface Metrics {
 export type Misc = Record<string, string>
 
 export interface BDFRes {
+  length: number
   headers: BDFFont['headers']
   props: BDFFont['props']
-  glyphs: BDFFont['glyphs']
 }
 
 const clean = <T>(o: Record<string, T | null | undefined>) => {
@@ -49,6 +49,8 @@ const clean = <T>(o: Record<string, T | null | undefined>) => {
 }
 
 export default class Font {
+  length = $state<number>()
+
   meta = $state<Meta>({
     foundry: 'bited',
     family: 'NEW FONT',
@@ -109,11 +111,13 @@ export default class Font {
     this.useMetrics(metrics)
   }
 
-  read({ headers, props }: BDFRes) {
+  read({ length, headers, props }: BDFRes) {
     const num = (s?: string | number | null) => {
       const n = +(s ?? 0)
       return Number.isNaN(n) ? 0 : n
     }
+
+    this.length = length
 
     const [
       foundry,

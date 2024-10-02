@@ -23,6 +23,12 @@
 
     len = $derived(this.view.length)
 
+    fakelen = $derived(
+      Array.isArray(this.view)
+        ? st.font.length ?? this.len
+        : this.len,
+    )
+
     vs = $state(2)
     vw = $derived(st.vw * this.vs * px.scale)
     vh = $derived(px.fsz + 8 + px.scale + this.vw)
@@ -31,7 +37,7 @@
     gw = $derived(this.vw + this.gap)
 
     cols = $derived(cw / this.gw | 0)
-    rows = $derived(Math.ceil(this.len / this.cols))
+    rows = $derived(Math.ceil(this.fakelen / this.cols))
     h = $derived(this.rows * this.gh + this.gap)
     w = $derived(this.cols * this.gw + this.gap)
 
@@ -45,7 +51,11 @@
     i0 = $derived(this.row0 * this.cols)
     i1 = $derived(Math.min(this.row1 * this.cols, this.len))
 
-    gutw = $derived((this.cols * this.rows - this.len) * this.gw - 1)
+    gutw = $derived(
+      this.len < this.fakelen - this.cols
+        ? 0
+        : (this.cols * this.rows - this.len) * this.gw - 1,
+    )
 
     items = $derived.by(() => {
       const res = []
@@ -149,7 +159,7 @@
 
 <BDFRead />
 
-{#if virt.view.length > 0}
+{#if virt.view.length}
   <div class='mb-24 mt-8 container'>
     <div class='w-full' bind:clientWidth={cw}>
       <div class='mx-auto w-fit'>

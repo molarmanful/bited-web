@@ -42,7 +42,18 @@ self.onmessage = async ({ data }) => {
       continue
 
     const { meta } = glyph
-    res.push([meta.codepoint, meta])
+    const ks = new Set<string>()
+
+    for (const [y, h] of meta.hexdata.entries()) {
+      let b = BigInt(`0x${h}`)
+      for (let x = h.length * 4; x-- > 0 && b;) {
+        if (b & 1n)
+          ks.add(`${y} ${x}`)
+        b >>= 1n
+      }
+    }
+
+    res.push([meta.codepoint, meta, ks])
 
     if (Date.now() - now > 10) {
       self.postMessage(res)
