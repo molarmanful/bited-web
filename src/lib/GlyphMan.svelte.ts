@@ -61,7 +61,7 @@ export default class GlyphMan {
       this.glyphs.set(code, glyph)
 
       if (Date.now() - now > 50) {
-        await new Promise(f => requestIdleCallback(f))
+        await new Promise<void>(f => setTimeout(f))
         now = Date.now()
       }
 
