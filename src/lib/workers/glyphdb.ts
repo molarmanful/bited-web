@@ -2,9 +2,11 @@
 
 import { db } from '$lib/db'
 
+const [cmd, alive] = self.name.split(' ')
+
 self.onmessage = async ({ data }) => {
   await db.transaction('rw', db.glyphs, () => {
-    switch (self.name) {
+    switch (cmd) {
       case 'put':
         db.glyphs.bulkPut(data)
         break
@@ -15,5 +17,6 @@ self.onmessage = async ({ data }) => {
     }
   })
 
-  self.close()
+  if (!alive)
+    self.close()
 }

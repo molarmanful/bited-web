@@ -34,19 +34,30 @@ export default class GlyphMan {
     })
   }
 
-  // TODO: store glyphs
   async read(res: BDFRes) {
+    const gd = new GlyphDB({ name: 'put 1' })
     let now = Date.now()
+    let now1 = Date.now()
+    let q: GlyphSer[] = []
     for (let i = 0; i < res.length; i++) {
       const [code, meta] = res[i]
       if (code < 0)
         continue
 
-      this.glyphs.set(code, Glyph.read(this.font, meta, this.st.vw))
+      const glyph = Glyph.read(this.font, meta, this.st.vw, () => {
+        q.push(glyph.ser)
+      })
+      this.glyphs.set(code, glyph)
 
       if (Date.now() - now > 50) {
         await new Promise(f => requestIdleCallback(f))
         now = Date.now()
+      }
+
+      if (Date.now() - now1 > 100) {
+        gd.postMessage(q)
+        q = []
+        now1 = Date.now()
       }
     }
   }

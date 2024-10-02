@@ -38,7 +38,7 @@ export default class Glyph {
     bbxoff,
     bbyoff,
     hexdata,
-  }: GlyphMeta, vw: number) {
+  }: GlyphMeta, vw: number, f = () => { }) {
     const g = new Glyph(font, code)
     g.width = dwx ?? g.width
 
@@ -54,7 +54,7 @@ export default class Glyph {
 
     const [dy, dx] = g.trdiff
     g.mat.translate(font.metrics.asc - bbh - bbyoff + dy, bbxoff + dx)
-    g.img(vw, vw)
+    g.img(vw, vw).then(f)
 
     return g
   }
@@ -63,6 +63,7 @@ export default class Glyph {
     const g = new Glyph(font, code)
     g.width = width
     g.blob = blob
+    g.genURL()
     g.mat = SBM.deser(mat)
     return g
   }
@@ -101,14 +102,18 @@ export default class Glyph {
     await new Promise<void>((res) => {
       cv.toBlob((blob) => {
         this.blob = blob
-        if (this.blob) {
-          if (this.url)
-            URL.revokeObjectURL(this.url)
-          this.url = URL.createObjectURL(this.blob)
-        }
+        this.genURL()
         res()
       })
     })
+  }
+
+  genURL() {
+    if (!this.blob)
+      return
+    if (this.url)
+      URL.revokeObjectURL(this.url)
+    this.url = URL.createObjectURL(this.blob)
   }
 
   resize(h: number, w: number) {
