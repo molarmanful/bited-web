@@ -53,13 +53,14 @@
     <button onclick={() => man.mode = 'line'}>LINE</button>
   </div>
 
-  {#if st.meta}
-    <div class='font-mono'>
-      U+{hex(st.code)}&nbsp;
-      {st.meta.category}&nbsp;
-      {st.meta.name}
-    </div>
-  {/if}
+  <div class='font-mono'>
+    U+{hex(st.code)}&nbsp;
+    {#if st.metaQ.current}
+      {@const meta = st.metaQ.current}
+      {meta.category}&nbsp;
+      {meta.name}
+    {/if}
+  </div>
 
   <div
     style:padding-top='{man.odd}px'

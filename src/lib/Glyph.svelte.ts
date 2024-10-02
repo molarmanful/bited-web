@@ -97,14 +97,15 @@ export default class Glyph {
     ctx.putImageData(imageData, 0, 0)
 
     this.blob = null
-    if (this.url)
-      URL.revokeObjectURL(this.url)
 
     await new Promise<void>((res) => {
       cv.toBlob((blob) => {
         this.blob = blob
-        if (this.blob)
+        if (this.blob) {
+          if (this.url)
+            URL.revokeObjectURL(this.url)
           this.url = URL.createObjectURL(this.blob)
+        }
         res()
       })
     })

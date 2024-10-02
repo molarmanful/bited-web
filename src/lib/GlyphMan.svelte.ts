@@ -34,10 +34,14 @@ export default class GlyphMan {
     })
   }
 
+  // TODO: store glyphs
   async read(res: BDFRes) {
     let now = Date.now()
     for (let i = 0; i < res.length; i++) {
       const [code, meta] = res[i]
+      if (code < 0)
+        continue
+
       this.glyphs.set(code, Glyph.read(this.font, meta, this.st.vw))
 
       if (Date.now() - now > 50) {

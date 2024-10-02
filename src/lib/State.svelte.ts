@@ -16,13 +16,11 @@ export default class State {
   block = $state('')
   code = $state(-1)
 
-  #metaQ = liveQ(() =>
+  metaQ = liveQ(() =>
     this.code < 0
       ? void 0
       : db.transaction('r', db.ucdata, () => db.ucdata.get(this.code)),
   )
-
-  meta = $derived(this.#metaQ.current)
 
   vscale = $state(3)
   vw = $derived(8 * this.vscale)
