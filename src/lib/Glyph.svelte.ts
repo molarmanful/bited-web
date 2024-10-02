@@ -13,7 +13,7 @@ export default class Glyph {
   code = $state(-1)
   width = $state(0)
   blob = $state<Blob | null>(null)
-  url = $derived(this.blob ? URL.createObjectURL(this.blob) : void 0)
+  url = $state<string>()
   mat = new SBM()
 
   ser = $derived({
@@ -42,7 +42,7 @@ export default class Glyph {
     const g = new Glyph(font, code)
     g.width = dwx ?? g.width
 
-    g.mat.resize(bbh, bbw)
+    g.mat.resize(vw, vw)
     for (const [y, h] of hexdata.entries()) {
       let b = BigInt(`0x${h}`)
       for (let x = h.length * 4; x-- > 0 && b;) {
@@ -52,6 +52,8 @@ export default class Glyph {
       }
     }
 
+    const [dy, dx] = g.trdiff
+    g.mat.translate(font.metrics.asc - bbh - bbyoff + dy, bbxoff + dx)
     g.img(vw, vw)
 
     return g
@@ -65,7 +67,7 @@ export default class Glyph {
     return g
   }
 
-  img(h: number, w: number) {
+  async img(h: number, w: number) {
     const [h0, w0] = this.mat.size
     this.resize(h, w)
 
@@ -95,10 +97,14 @@ export default class Glyph {
     ctx.putImageData(imageData, 0, 0)
 
     this.blob = null
+    if (this.url)
+      URL.revokeObjectURL(this.url)
 
-    return new Promise<void>((res) => {
+    await new Promise<void>((res) => {
       cv.toBlob((blob) => {
         this.blob = blob
+        if (this.blob)
+          this.url = URL.createObjectURL(this.blob)
         res()
       })
     })

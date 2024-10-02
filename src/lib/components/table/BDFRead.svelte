@@ -20,13 +20,10 @@
       return
 
     const bdf = new BDF()
-    // FIXME: remove
-    bdf.onmessage = ({ data }: MessageEvent<FontRes | GlyphRes>) => {
+    bdf.onmessage = async ({ data }: MessageEvent<FontRes | GlyphRes>) => {
       if (!data)
         return
       if (Array.isArray(data)) {
-        if (data[0] !== 65)
-          return
         st.glyphman.read(data)
         return
       }

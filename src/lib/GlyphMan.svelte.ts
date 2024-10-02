@@ -9,7 +9,7 @@ import GlyphDB from '$lib/workers/glyphdb?worker'
 import GlyphRestore from '$lib/workers/glyphrestore?worker'
 import { SvelteMap } from 'svelte/reactivity'
 
-export type BDFRes = [number, GlyphMeta]
+export type BDFRes = [number, GlyphMeta][]
 
 export default class GlyphMan {
   st: State
@@ -34,8 +34,17 @@ export default class GlyphMan {
     })
   }
 
-  read([code, meta]: BDFRes) {
-    this.glyphs.set(code, Glyph.read(this.font, meta, this.st.vw))
+  async read(res: BDFRes) {
+    let now = Date.now()
+    for (let i = 0; i < res.length; i++) {
+      const [code, meta] = res[i]
+      this.glyphs.set(code, Glyph.read(this.font, meta, this.st.vw))
+
+      if (Date.now() - now > 50) {
+        await new Promise(f => requestIdleCallback(f))
+        now = Date.now()
+      }
+    }
   }
 
   get(code: number) {

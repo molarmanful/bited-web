@@ -1,5 +1,7 @@
 /* eslint-disable no-restricted-globals */
 
+import type { BDFRes } from '$lib/GlyphMan.svelte'
+
 import { $Font } from 'bdfparser'
 
 // damn you safari
@@ -33,12 +35,22 @@ self.onmessage = async ({ data }) => {
     props: font.props,
   })
 
+  let res: BDFRes = []
+  let now = Date.now()
   for (const glyph of font.iterglyphs()) {
     if (!glyph)
       continue
+
     const { meta } = glyph
-    self.postMessage([meta.codepoint, meta])
+    res.push([meta.codepoint, meta])
+
+    if (Date.now() - now > 10) {
+      self.postMessage(res)
+      res = []
+      now = Date.now()
+    }
   }
 
+  self.postMessage(res)
   self.close()
 }

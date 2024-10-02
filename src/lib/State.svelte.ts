@@ -58,7 +58,6 @@ export default class State {
   }
 
   async restore() {
-    // TODO: verify that this works
     await navigator?.storage?.persist?.()
 
     const SR = new StateRestore()

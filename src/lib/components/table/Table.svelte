@@ -147,7 +147,6 @@
 
 <Nav onchange={() => sel.reset()} />
 
-<!-- TODO: drag-drop -->
 <BDFRead />
 
 {#if virt.view.length > 0}

@@ -210,8 +210,6 @@ export default class Man {
       )
     }
 
-    // TODO: convert to dark mode
-
     const htints = new Map([
       [oy - this.font.metrics.asc, this.theme.asc],
       [oy - this.font.metrics.cap_h, this.theme.cap],
