@@ -25,7 +25,7 @@
   bdf.postMessage(files[0])
 
   let first = false
-  bdf.onmessage = async ({ data }: MessageEvent<FontRes | GlyphRes>) => {
+  bdf.onmessage = ({ data }: MessageEvent<FontRes | GlyphRes>) => {
     if (!data)
       return
 
