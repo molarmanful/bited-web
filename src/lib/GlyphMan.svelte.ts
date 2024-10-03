@@ -52,6 +52,7 @@ export default class GlyphMan {
     let now = Date.now()
     let now1 = Date.now()
     let q: GlyphSer[] = []
+    let n = 0
 
     for (let i = 0; i < res.length; i++) {
       const [code, meta, ks] = res[i]
@@ -60,24 +61,23 @@ export default class GlyphMan {
 
       const glyph = Glyph.read(this.font, this.st.vw, meta, ks, () => {
         q.push(glyph.ser)
-        if (i < res.length - 1)
+        n++
+
+        if (n < res.length && Date.now() - now1 < 100)
           return
         gd.postMessage(q)
-        gd.postMessage('CLOSE')
+        now1 = Date.now()
+        if (n >= res.length)
+          gd.postMessage('CLOSE')
         q = []
       })
+
       this.glyphs.set(code, glyph)
 
-      if (Date.now() - now > 50) {
-        await new Promise<void>(f => setTimeout(f))
-        now = Date.now()
-      }
-
-      if (Date.now() - now1 > 100 && q.length) {
-        gd.postMessage(q)
-        q = []
-        now1 = Date.now()
-      }
+      if (Date.now() - now < 50)
+        continue
+      await new Promise<void>(f => setTimeout(f))
+      now = Date.now()
     }
   }
 
