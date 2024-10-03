@@ -30,11 +30,17 @@ export default class GlyphMan {
     const GR = new GlyphRestore()
 
     await new Promise<void>((res) => {
-      GR.onmessage = ({ data }: { data: GlyphSer[] | 'DONE' }) => {
+      GR.onmessage = ({ data }: { data: number | GlyphSer[] | 'DONE' }) => {
         if (data === 'DONE') {
           res()
           return
         }
+
+        if (typeof data === 'number') {
+          this.font.length = data
+          return
+        }
+
         for (const g of data)
           this.glyphs.set(g.code, Glyph.deser(this.font, g))
       }

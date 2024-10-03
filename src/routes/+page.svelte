@@ -36,7 +36,9 @@
 {:else}
   <div class='h-screen flex items-center justify-center'>
     loading{#if !st.ready}
-      &nbsp;save data
+      &nbsp;save data{#if st.font.length}
+        &nbsp;({st.glyphman.glyphs.size}/{st.font.length})
+      {/if}
     {:else if !st.uc.ready}
       &nbsp;unicode data
     {/if}...
