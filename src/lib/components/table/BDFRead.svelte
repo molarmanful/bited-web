@@ -35,7 +35,6 @@
     }
 
     if (Array.isArray(data)) {
-      console.log('recv')
       st.glyphman.read(data)
       return
     }
