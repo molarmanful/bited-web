@@ -1,8 +1,9 @@
 <script lang='ts'>
   import { cState } from '$lib/contexts'
+  import { db } from '$lib/db'
   import Px from '$lib/Px.svelte'
   import { Range } from '$lib/Uc.svelte'
-  import { clickout } from '$lib/util'
+  import { clickout, liveQ } from '$lib/util'
   import { SvelteSet } from 'svelte/reactivity'
 
   import { BDFRead, Nav } from '.'
@@ -196,7 +197,7 @@
     onclick={() => sel.edit(k)}
   >
     {@render char(k)}
-    <div class='h-0 w-full b-(t-1 bord)'></div>
+    <div class='h-0 w-full b-(t-1 bord/50)'></div>
     {@render img(k)}
   </button>
 {/snippet}

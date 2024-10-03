@@ -7,6 +7,8 @@ import {
   transformerVariantGroup,
 } from 'unocss'
 
+const clr = s => `rgba(var(--c-${s}))`
+
 export default {
   presets: [
     presetUno(),
@@ -30,11 +32,11 @@ export default {
   safelist: [],
   theme: {
     colors: {
-      fg: 'var(--c-fg)',
-      bg: 'var(--c-bg)',
-      bord: 'var(--c-bord)',
-      dis: 'var(--c-dis)',
-      sel: 'var(--c-sel)',
+      fg: clr('fg'),
+      bg: clr('bg'),
+      bord: clr('bord'),
+      dis: clr('dis'),
+      sel: clr('sel'),
     },
   },
   rules: [],

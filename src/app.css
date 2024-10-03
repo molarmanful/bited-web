@@ -5,23 +5,23 @@
   --fsz2: calc(var(--fsz) * 2);
   --fsz3: calc(var(--fsz) * 3);
 
-  --c-fg: #000;
-  --c-bg: #fff;
-  --c-bord: #000;
-  --c-dis: #d4d4d4;
-  --c-sel: #3b82f6;
+  --c-fg: 0, 0, 0;
+  --c-bg: 255, 255, 255;
+  --c-bord: 0, 0, 0;
+  --c-dis: 212, 212, 212;
+  --c-sel: 59, 130, 246;
 }
 
 .dark {
-  --c-fg: #fff;
-  --c-bg: #000;
-  --c-bord: #262626;
-  --c-dis: #171717;
-  --c-sel: #1e40af;
+  --c-fg: 255, 255, 255;
+  --c-bg: 0, 0, 0;
+  --c-bord: 38, 38, 38;
+  --c-dis: 23, 23, 23;
+  --c-sel: 30, 64, 175;
 }
 
 body {
-  @apply text-fg bg-bg;
+  @apply text-fg bg-bg/100;
 }
 
 canvas {

@@ -57,13 +57,11 @@ self.onmessage = async ({ data }) => {
 
     if (Date.now() - now > 50) {
       self.postMessage(res)
-      console.log('send')
       res = []
       now = Date.now()
     }
   }
 
   self.postMessage(res)
-  console.log('send')
   self.close()
 }
