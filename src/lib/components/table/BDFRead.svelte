@@ -1,9 +1,9 @@
 <script lang='ts'>
   import type { BDFRes as FontRes } from '$lib/Font.svelte'
-  import type { BDFRes as GlyphRes } from '$lib/GlyphMan.svelte'
   import type { HTMLInputAttributes } from 'svelte/elements'
 
   import { cState } from '$lib/contexts'
+  import { type BDFRes as GlyphRes, Reader } from '$lib/GlyphMan.svelte'
   import BDF from '$lib/workers/bdfread?worker'
 
   interface Props extends HTMLInputAttributes {
@@ -24,18 +24,21 @@
   const bdf = new BDF()
   bdf.postMessage(files[0])
 
-  let first = false
+  let first = true
+
+  const reader = new Reader(st.glyphman)
+
   bdf.onmessage = ({ data }: MessageEvent<FontRes | GlyphRes>) => {
     if (!data)
       return
 
-    if (!first) {
+    if (first) {
       st.glyphman.clear()
-      first = true
+      first = false
     }
 
     if (Array.isArray(data)) {
-      st.glyphman.read(data)
+      reader.read(data)
       return
     }
 

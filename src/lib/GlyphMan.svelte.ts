@@ -47,40 +47,6 @@ export default class GlyphMan {
     })
   }
 
-  async read(res: BDFRes) {
-    const gd = new GlyphDB({ name: 'put 1' })
-    let now = Date.now()
-    let now1 = Date.now()
-    let q: GlyphSer[] = []
-    let n = 0
-
-    for (let i = 0; i < res.length; i++) {
-      const [code, meta, ks] = res[i]
-      if (code < 0)
-        continue
-
-      const glyph = Glyph.read(this.font, this.st.vw, meta, ks, () => {
-        q.push(glyph.ser)
-        n++
-
-        if (n < res.length && Date.now() - now1 < 100)
-          return
-        gd.postMessage(q)
-        now1 = Date.now()
-        if (n >= res.length)
-          gd.postMessage('CLOSE')
-        q = []
-      })
-
-      this.glyphs.set(code, glyph)
-
-      if (Date.now() - now < 50)
-        continue
-      await new Promise<void>(f => setTimeout(f))
-      now = Date.now()
-    }
-  }
-
   get(code: number) {
     return this.glyphs.get(code)
   }
@@ -101,5 +67,56 @@ export default class GlyphMan {
     this.glyphs.clear()
     const gd = new GlyphDB({ name: 'clr' })
     gd.postMessage([])
+  }
+}
+
+export class Reader {
+  gm: GlyphMan
+
+  #unlock = () => { }
+  #promise = Promise.resolve()
+
+  constructor(gm: GlyphMan) {
+    this.gm = gm
+  }
+
+  #lock() {
+    this.#promise = new Promise(res => this.#unlock = res)
+  }
+
+  async read(res: BDFRes) {
+    await this.#promise
+
+    this.#lock()
+    const gd = new GlyphDB({ name: 'put 1' })
+    let q: GlyphSer[] = []
+    let now = Date.now()
+    let n = 0
+
+    for (const [code, meta, ks] of res) {
+      if (code < 0)
+        continue
+
+      const glyph = Glyph.read(this.gm.font, this.gm.st.vw, meta, ks, () => {
+        q.push(glyph.ser)
+
+        n++
+        if (n < res.length)
+          return
+
+        this.#unlock()
+        gd.postMessage(q)
+        gd.postMessage('CLOSE')
+      })
+
+      this.gm.glyphs.set(code, glyph)
+
+      if (Date.now() - now < 50)
+        continue
+      gd.postMessage(q)
+      q = []
+      await new Promise<void>(f => setTimeout(f))
+      now = Date.now()
+    }
   }
 }
