@@ -30,11 +30,13 @@ export default class GlyphMan {
     const GR = new GlyphRestore()
 
     await new Promise<void>((res) => {
-      GR.onmessage = ({ data }: { data: GlyphSer[] }) => {
-        this.glyphs = new SvelteMap(
-          data.map(g => [g.code, Glyph.deser(this.font, g)]),
-        )
-        res()
+      GR.onmessage = ({ data }: { data: GlyphSer[] | 'DONE' }) => {
+        if (data === 'DONE') {
+          res()
+          return
+        }
+        for (const g of data)
+          this.glyphs.set(g.code, Glyph.deser(this.font, g))
       }
     })
   }
