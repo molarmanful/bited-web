@@ -1,9 +1,7 @@
 <script lang='ts'>
   import { cState } from '$lib/contexts'
-  import { db } from '$lib/db'
   import Px from '$lib/Px.svelte'
-  import { Range } from '$lib/Uc.svelte'
-  import { clickout, liveQ } from '$lib/util'
+  import { clickout } from '$lib/util'
   import { SvelteSet } from 'svelte/reactivity'
 
   import { BDFRead, Nav } from '.'
@@ -64,8 +62,7 @@
       let y = this.row0
 
       for (let i = this.i0; i < this.i1; i++) {
-        const k
-          = this.view instanceof Range ? this.view.get(i) : this.view[i]
+        const k = Array.isArray(this.view) ? this.view[i] : this.view.get(i)
 
         res.push({
           x: x * this.gw,
