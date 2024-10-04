@@ -89,7 +89,7 @@ export class Reader {
 
     this.#lock()
     const gd = new GlyphDB({ name: 'put 1' })
-    let q: GlyphSer[] = []
+    const q: GlyphSer[] = []
     let now = Date.now()
     let n = 0
 
@@ -113,8 +113,6 @@ export class Reader {
 
       if (Date.now() - now < 50)
         continue
-      gd.postMessage(q)
-      q = []
       await new Promise<void>(f => setTimeout(f))
       now = Date.now()
     }
